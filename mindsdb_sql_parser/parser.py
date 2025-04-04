@@ -112,22 +112,20 @@ class MindsDBParser(Parser):
         name = p.identifier
         # check model and storage are in params
         params = {k.lower(): v for k, v in params.items()}  # case insensitive
-        model = params.pop('model', None)
+        embedding_model = params.pop('embedding_model', None)
+        reranking_model = params.pop('reranking_model', None)
         storage = params.pop('storage', None)
 
         if isinstance(storage, str):
             # convert to identifier
             storage = Identifier(storage)
 
-        if isinstance(model, str):
-            # convert to identifier
-            model = Identifier(model)
-
         if_not_exists = p.if_not_exists_or_empty
 
         return CreateKnowledgeBase(
             name=name,
-            model=model,
+            embedding_model=embedding_model,
+            reranking_model=reranking_model,
             storage=storage,
             from_select=from_query,
             params=params,
