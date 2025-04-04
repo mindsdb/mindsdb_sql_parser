@@ -1,3 +1,5 @@
+import json
+
 from mindsdb_sql_parser.ast.base import ASTNode
 from mindsdb_sql_parser.utils import indent
 
@@ -9,7 +11,8 @@ class CreateKnowledgeBase(ASTNode):
     def __init__(
         self,
         name,
-        model=None,
+        embedding_model=None,
+        reranking_model=None,
         storage=None,
         from_select=None,
         params=None,
@@ -20,7 +23,8 @@ class CreateKnowledgeBase(ASTNode):
         """
         Args:
             name: Identifier -- name of the knowledge base
-            model: Identifier -- name of the model to use
+            embedding_model: dict -- name of the embedding model to use
+            reranking_model: dict -- name of the reranking model to use
             storage: Identifier -- name of the storage to use
             from_select: SelectStatement -- select statement to use as the source of the knowledge base
             params: dict -- additional parameters to pass to the knowledge base. E.g., chunking strategy, etc.
@@ -28,7 +32,8 @@ class CreateKnowledgeBase(ASTNode):
         """
         super().__init__(*args, **kwargs)
         self.name = name
-        self.model = model
+        self.embedding_model = embedding_model
+        self.reranking_model = reranking_model
         self.storage = storage
         self.params = params
         self.if_not_exists = if_not_exists
@@ -36,14 +41,19 @@ class CreateKnowledgeBase(ASTNode):
 
     def to_tree(self, *args, level=0, **kwargs):
         ind = indent(level)
-        storage_str = f"{ind} storage={self.storage.to_string()},\n" if self.storage else ""
-        model_str = f"{ind} model={self.model.to_string()},\n" if self.model else ""
+        storage_str = f"{ind}storage={self.storage.to_string()}," if self.storage else ""
+        embedding_model_str = f"{ind}embedding_model={str(self.embedding_model)}," if self.embedding_model else ""
+        reranking_model_str = f"{ind}reranking_model={str(self.reranking_model)}," if self.reranking_model else ""
+
         out_str = f"""
         {ind}CreateKnowledgeBase(
         {ind}    if_not_exists={self.if_not_exists},
         {ind}    name={self.name.to_string()},
         {ind}    from_query={self.from_query.to_tree(level=level + 1) if self.from_query else None},
-        {model_str}{storage_str}{ind}    params={self.params}
+        {ind}    {embedding_model_str}
+        {ind}    {reranking_model_str}
+        {ind}    {storage_str}
+        {ind}    params={self.params}
         {ind})
         """
         return out_str
@@ -56,8 +66,11 @@ class CreateKnowledgeBase(ASTNode):
         using_ar = []
         if self.storage:
             using_ar.append(f"  STORAGE={self.storage.to_string()}")
-        if self.model:
-            using_ar.append(f"  MODEL={self.model.to_string()}")
+        embedding_model_str = ""
+        if self.embedding_model_str:
+            using_ar.append(f"  EMBEDDING_MODEL={json.dumps(self.embedding_model)}")
+        if self.reranking_model_str:
+            using_ar.append(f"  RERANKING_MODEL={json.dumps(self.reranking_model)}")
 
         params = self.params.copy()
         if params:
