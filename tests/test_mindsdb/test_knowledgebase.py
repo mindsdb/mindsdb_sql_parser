@@ -24,14 +24,21 @@ class TestKB:
         sql = """
             CREATE KNOWLEDGE_BASE my_knowledge_base
             USING
-                MODEL=mindsdb.my_embedding_model,
+                EMBEDDING_MODEL={
+                    "model": "text-embedding-3-small",
+                    "api_key": "sk-1234567890",
+                },
                 STORAGE = my_vector_database.some_table
         """
         ast = parse_sql(sql)
         expected_ast = CreateKnowledgeBase(
             name=Identifier("my_knowledge_base"),
             if_not_exists=False,
-            model=Identifier(parts=["mindsdb", "my_embedding_model"]),
+            embedding_model={
+                "model": "text-embedding-3-small",
+                "api_key": "sk-1234567890",
+            },
+            reranking_model=None,
             storage=Identifier(parts=["my_vector_database", "some_table"]),
             from_select=None,
             params={},
@@ -42,18 +49,24 @@ class TestKB:
         sql = """
             CREATE KNOWLEDGE BASE my_knowledge_base
             USING
-                MODEL=mindsdb.my_embedding_model,
+                EMBEDDING_MODEL={
+                    "model": "text-embedding-3-small",
+                    "api_key": "sk-1234567890",
+                },
                 STORAGE = my_vector_database.some_table
         """
         ast = parse_sql(sql)
         assert ast == expected_ast
 
-        # the order of MODEL and STORAGE should not matter
+        # the order of EMBEDDING_MODEL and STORAGE should not matter
         sql = """
             CREATE KNOWLEDGE_BASE my_knowledge_base
             USING
                 STORAGE = my_vector_database.some_table,
-                MODEL = mindsdb.my_embedding_model
+                EMBEDDING_MODEL={
+                    "model": "text-embedding-3-small",
+                    "api_key": "sk-1234567890",
+                }
         """
         ast = parse_sql(sql)
         assert ast == expected_ast
@@ -67,14 +80,21 @@ class TestKB:
                 JOIN my_embedding_model
             )
             USING
-                MODEL = mindsdb.my_embedding_model,
+                EMBEDDING_MODEL={
+                    "model": "text-embedding-3-small",
+                    "api_key": "sk-1234567890",
+                },
                 STORAGE = my_vector_database.some_table
         """
         ast = parse_sql(sql)
         expected_ast = CreateKnowledgeBase(
             name=Identifier("my_knowledge_base"),
             if_not_exists=False,
-            model=Identifier(parts=["mindsdb", "my_embedding_model"]),
+            embedding_model={
+                "model": "text-embedding-3-small",
+                "api_key": "sk-1234567890",
+            },
+            reranking_model=None,
             storage=Identifier(parts=["my_vector_database", "some_table"]),
             from_select=Select(
                 targets=[
@@ -94,7 +114,7 @@ class TestKB:
 
         assert ast == expected_ast
 
-        # create without MODEL
+        # create without EMBEDDING_MODEL
         sql = """
             CREATE KNOWLEDGE_BASE my_knowledge_base
             USING
@@ -104,7 +124,8 @@ class TestKB:
         expected_ast = CreateKnowledgeBase(
             name=Identifier("my_knowledge_base"),
             if_not_exists=False,
-            model=None,
+            embedding_model=None,
+            reranking_model=None,
             storage=Identifier(parts=["my_vector_database", "some_table"]),
             from_select=None,
             params={},
@@ -118,13 +139,20 @@ class TestKB:
         sql = """
             CREATE KNOWLEDGE_BASE my_knowledge_base
             USING
-                MODEL = mindsdb.my_embedding_model
+                EMBEDDING_MODEL={
+                    "model": "text-embedding-3-small",
+                    "api_key": "sk-1234567890",
+                }
         """
 
         expected_ast = CreateKnowledgeBase(
             name=Identifier("my_knowledge_base"),
             if_not_exists=False,
-            model=Identifier(parts=["mindsdb", "my_embedding_model"]),
+            embedding_model={
+                "model": "text-embedding-3-small",
+                "api_key": "sk-1234567890",
+            },
+            reranking_model=None,
             from_select=None,
             params={},
         )
@@ -137,14 +165,21 @@ class TestKB:
         sql = """
             CREATE KNOWLEDGE_BASE IF NOT EXISTS my_knowledge_base
             USING
-                MODEL = mindsdb.my_embedding_model,
+                EMBEDDING_MODEL={
+                    "model": "text-embedding-3-small",
+                    "api_key": "sk-1234567890",
+                },
                 STORAGE = my_vector_database.some_table
         """
         ast = parse_sql(sql)
         expected_ast = CreateKnowledgeBase(
             name=Identifier("my_knowledge_base"),
             if_not_exists=True,
-            model=Identifier(parts=["mindsdb", "my_embedding_model"]),
+            embedding_model={
+                "model": "text-embedding-3-small",
+                "api_key": "sk-1234567890",
+            },
+            reranking_model=None,
             storage=Identifier(parts=["my_vector_database", "some_table"]),
             from_select=None,
             params={},
@@ -160,7 +195,8 @@ class TestKB:
         expected_ast = CreateKnowledgeBase(
             name=Identifier("my_knowledge_base"),
             if_not_exists=False,
-            model=None,
+            embedding_model=None,
+            reranking_model=None,
             storage=None,
             from_select=None,
             params={},
@@ -171,7 +207,10 @@ class TestKB:
         sql = """
             CREATE KNOWLEDGE_BASE my_knowledge_base
             USING
-                MODEL = mindsdb.my_embedding_model,
+                EMBEDDING_MODEL={
+                    "model": "text-embedding-3-small",
+                    "api_key": "sk-1234567890",
+                },
                 STORAGE = my_vector_database.some_table,
                 some_param = 'some value',
                 other_param = 'other value'
@@ -180,7 +219,11 @@ class TestKB:
         expected_ast = CreateKnowledgeBase(
             name=Identifier("my_knowledge_base"),
             if_not_exists=False,
-            model=Identifier(parts=["mindsdb", "my_embedding_model"]),
+            embedding_model={
+                "model": "text-embedding-3-small",
+                "api_key": "sk-1234567890",
+            },
+            reranking_model=None,
             storage=Identifier(parts=["my_vector_database", "some_table"]),
             from_select=None,
             params={"some_param": "some value", "other_param": "other value"},
