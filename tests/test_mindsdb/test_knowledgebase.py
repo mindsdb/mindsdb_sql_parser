@@ -230,6 +230,95 @@ class TestKB:
         )
         assert ast == expected_ast
 
+        # Create Knowledge Base with embedding model and reranking model.
+        sql = """
+            CREATE KNOWLEDGE_BASE my_knowledge_base
+            USING
+                EMBEDDING_MODEL={
+                    "model": "text-embedding-3-small",
+                    "api_key": "sk-1234567890"
+                },
+                RERANKING_MODEL={
+                    "model": "text-embedding-3-small",
+                    "api_key": "sk-1234567890"
+                },
+                STORAGE = my_vector_database.some_table
+        """
+        ast = parse_sql(sql)
+
+        expected_ast = CreateKnowledgeBase(
+            name=Identifier("my_knowledge_base"),
+            if_not_exists=False,
+            embedding_model={
+                "model": "text-embedding-3-small",
+                "api_key": "sk-1234567890",
+            },
+            reranking_model={
+                "model": "text-embedding-3-small",
+                "api_key": "sk-1234567890",
+            },
+            storage=Identifier(parts=["my_vector_database", "some_table"]),
+            from_select=None,
+            params={},
+        )
+        assert ast == expected_ast
+
+        # Create Knowledge Base with reranking model and without embedding model.
+        sql = """
+            CREATE KNOWLEDGE_BASE my_knowledge_base
+            USING
+                RERANKING_MODEL={
+                    "model": "text-embedding-3-small",
+                    "api_key": "sk-1234567890"
+                },
+                STORAGE = my_vector_database.some_table
+        """
+        ast = parse_sql(sql)
+        expected_ast = CreateKnowledgeBase(
+            name=Identifier("my_knowledge_base"),
+            if_not_exists=False,
+            embedding_model=None,
+            reranking_model={
+                "model": "text-embedding-3-small",
+                "api_key": "sk-1234567890",
+            },
+            storage=Identifier(parts=["my_vector_database", "some_table"]),
+            from_select=None,
+            params={},
+        )
+        assert ast == expected_ast
+
+        # Create Knowledge Base with emebedding model and reranking model and without storage.
+        sql = """
+            CREATE KNOWLEDGE_BASE my_knowledge_base
+            USING
+                EMBEDDING_MODEL={
+                    "model": "text-embedding-3-small",
+                    "api_key": "sk-1234567890"
+                },
+                RERANKING_MODEL={
+                    "model": "text-embedding-3-small",
+                    "api_key": "sk-1234567890"
+                }
+        """
+        ast = parse_sql(sql)
+        expected_ast = CreateKnowledgeBase( 
+            name=Identifier("my_knowledge_base"),
+            if_not_exists=False,
+            embedding_model={
+                "model": "text-embedding-3-small",
+                "api_key": "sk-1234567890",
+            },
+            reranking_model={
+                "model": "text-embedding-3-small",
+                "api_key": "sk-1234567890",
+            },
+            storage=None,
+            from_select=None,
+            params={},
+        )
+        assert ast == expected_ast
+
     def test_drop_knowledge_base(self):
         # drop if exists
         sql = """
@@ -307,7 +396,6 @@ class TestKB:
             limit=Constant(10),
         )
         assert ast == expected_ast
-
 
     def test_delete_from_knowledge_base(self):
         # this is no different from a regular delete
