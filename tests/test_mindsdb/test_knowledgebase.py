@@ -26,7 +26,7 @@ class TestKB:
             USING
                 EMBEDDING_MODEL={
                     "model": "text-embedding-3-small",
-                    "api_key": "sk-1234567890",
+                    "api_key": "sk-1234567890"
                 },
                 STORAGE = my_vector_database.some_table
         """
@@ -51,7 +51,7 @@ class TestKB:
             USING
                 EMBEDDING_MODEL={
                     "model": "text-embedding-3-small",
-                    "api_key": "sk-1234567890",
+                    "api_key": "sk-1234567890"
                 },
                 STORAGE = my_vector_database.some_table
         """
@@ -65,7 +65,7 @@ class TestKB:
                 STORAGE = my_vector_database.some_table,
                 EMBEDDING_MODEL={
                     "model": "text-embedding-3-small",
-                    "api_key": "sk-1234567890",
+                    "api_key": "sk-1234567890"
                 }
         """
         ast = parse_sql(sql)
@@ -82,7 +82,7 @@ class TestKB:
             USING
                 EMBEDDING_MODEL={
                     "model": "text-embedding-3-small",
-                    "api_key": "sk-1234567890",
+                    "api_key": "sk-1234567890"
                 },
                 STORAGE = my_vector_database.some_table
         """
@@ -141,7 +141,7 @@ class TestKB:
             USING
                 EMBEDDING_MODEL={
                     "model": "text-embedding-3-small",
-                    "api_key": "sk-1234567890",
+                    "api_key": "sk-1234567890"
                 }
         """
 
@@ -167,7 +167,7 @@ class TestKB:
             USING
                 EMBEDDING_MODEL={
                     "model": "text-embedding-3-small",
-                    "api_key": "sk-1234567890",
+                    "api_key": "sk-1234567890"
                 },
                 STORAGE = my_vector_database.some_table
         """
@@ -209,7 +209,7 @@ class TestKB:
             USING
                 EMBEDDING_MODEL={
                     "model": "text-embedding-3-small",
-                    "api_key": "sk-1234567890",
+                    "api_key": "sk-1234567890"
                 },
                 STORAGE = my_vector_database.some_table,
                 some_param = 'some value',
