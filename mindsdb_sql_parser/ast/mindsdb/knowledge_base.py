@@ -66,10 +66,9 @@ class CreateKnowledgeBase(ASTNode):
         using_ar = []
         if self.storage:
             using_ar.append(f"  STORAGE={self.storage.to_string()}")
-        embedding_model_str = ""
-        if self.embedding_model_str:
+        if self.embedding_model:
             using_ar.append(f"  EMBEDDING_MODEL={json.dumps(self.embedding_model)}")
-        if self.reranking_model_str:
+        if self.reranking_model:
             using_ar.append(f"  RERANKING_MODEL={json.dumps(self.reranking_model)}")
 
         params = self.params.copy()
