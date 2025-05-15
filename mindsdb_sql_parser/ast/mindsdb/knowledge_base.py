@@ -122,3 +122,7 @@ class CreateKnowledgeBaseIndexBase(ASTNode):
         ind = indent(level)
         out_str = f"{ind}CreateIndexBase(name={self.name.to_string()})"
         return out_str
+
+    def get_string(self, *args, **kwargs):
+        out_str = f'CREATE INDEX ON KNOWLEDGE_BASE {self.name.to_string()}'
+        return out_str

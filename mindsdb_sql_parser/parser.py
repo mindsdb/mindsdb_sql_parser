@@ -94,7 +94,8 @@ class MindsDBParser(Parser):
        'update_skill',
        'create_agent',
        'drop_agent',
-       'update_agent'
+       'update_agent',
+       'create_index'
        )
     def query(self, p):
         return p[0]
