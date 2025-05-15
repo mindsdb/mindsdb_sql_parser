@@ -16,7 +16,8 @@ from mindsdb_sql_parser.ast.mindsdb.drop_job import DropJob
 from mindsdb_sql_parser.ast.mindsdb.trigger import CreateTrigger, DropTrigger
 from mindsdb_sql_parser.ast.mindsdb.latest import Latest
 from mindsdb_sql_parser.ast.mindsdb.evaluate import Evaluate
-from mindsdb_sql_parser.ast.mindsdb.knowledge_base import CreateKnowledgeBase, DropKnowledgeBase
+from mindsdb_sql_parser.ast.mindsdb.knowledge_base import CreateKnowledgeBase, DropKnowledgeBase, \
+    CreateKnowledgeBaseIndexBase
 from mindsdb_sql_parser.ast.mindsdb.skills import CreateSkill, DropSkill, UpdateSkill
 from mindsdb_sql_parser.exceptions import ParsingException
 from mindsdb_sql_parser.ast.mindsdb.retrain_predictor import RetrainPredictor
@@ -133,6 +134,10 @@ class MindsDBParser(Parser):
             params=params,
             if_not_exists=if_not_exists
         )
+
+    @_("CREATE INDEX ON KNOWLEDGE_BASE if_exists_or_empty identifier")
+    def create_index(self, p):
+        return CreateKnowledgeBaseIndexBase(name=p.identifier)
 
     @_('DROP KNOWLEDGE_BASE if_exists_or_empty identifier')
     def drop_kb(self, p):

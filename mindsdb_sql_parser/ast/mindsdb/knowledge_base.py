@@ -105,3 +105,20 @@ class DropKnowledgeBase(ASTNode):
     def get_string(self, *args, **kwargs):
         out_str = f'DROP KNOWLEDGE_BASE {"IF EXISTS " if self.if_exists else ""}{self.name.to_string()}'
         return out_str
+
+class CreateKnowledgeBaseIndexBase(ASTNode):
+    """
+    Create a new index in the knowledge base
+    """
+    def __init__(self, name, *args, **kwargs):
+        """
+        Args:
+            name: Identifier -- name of the knowledge base
+        """
+        super().__init__(*args, **kwargs)
+        self.name = name
+
+    def to_tree(self, *args, level=0, **kwargs):
+        ind = indent(level)
+        out_str = f"{ind}CreateIndexBase(name={self.name.to_string()})"
+        return out_str
