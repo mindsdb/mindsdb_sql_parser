@@ -73,6 +73,6 @@ Else:
 # How to test
 
 ```bash
-pip install -r requierements_test.txt
+pip install -r requirements_test.txt
 env PYTHONPATH=./ pytest
 ```
