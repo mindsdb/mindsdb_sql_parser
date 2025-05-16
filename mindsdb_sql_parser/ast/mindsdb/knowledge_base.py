@@ -126,3 +126,24 @@ class CreateKnowledgeBaseIndex(ASTNode):
     def get_string(self, *args, **kwargs):
         out_str = f'CREATE INDEX ON KNOWLEDGE_BASE {self.name.to_string()}'
         return out_str
+
+class DropKnowledgeBaseIndex(ASTNode):
+    """
+    Delete an index in the knowledge base
+    """
+    def __init__(self, name, *args, **kwargs):
+        """
+        Args:
+            name: Identifier -- name of the knowledge base
+        """
+        super().__init__(*args, **kwargs)
+        self.name = name
+
+    def to_tree(self, *args, level=0, **kwargs):
+        ind = indent(level)
+        out_str = f"{ind}DropKnowledgeBaseIndex(name={self.name.to_string()})"
+        return out_str
+
+    def get_string(self, *args, **kwargs):
+        out_str = f'DROP INDEX ON KNOWLEDGE_BASE {self.name.to_string()}'
+        return out_str
