@@ -136,7 +136,7 @@ class MindsDBParser(Parser):
             if_not_exists=if_not_exists
         )
 
-    @_("CREATE INDEX ON KNOWLEDGE_BASE if_exists_or_empty identifier")
+    @_("CREATE INDEX ON KNOWLEDGE_BASE identifier")
     def create_index(self, p):
         return CreateKnowledgeBaseIndex(name=p.identifier)
 
