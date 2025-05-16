@@ -7,7 +7,7 @@ class TestKB:
     def test_create_knowledge_base_index(self):
         # create without select
 
-        sql = """CREATE INDEX ON KNOWLEDGE_BASE my_index"""
+        sql = """CREATE INDEX ON KNOWLEDGE_BASE my_kb"""
         ast = parse_sql(sql)
         print(ast)
         expected_ast = CreateKnowledgeBaseIndex(
