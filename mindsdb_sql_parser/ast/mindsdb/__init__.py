@@ -15,7 +15,7 @@ from .create_job import CreateJob
 from .drop_job import DropJob
 from .chatbot import CreateChatBot, UpdateChatBot, DropChatBot
 from .trigger import CreateTrigger, DropTrigger
-from .knowledge_base import CreateKnowledgeBase, DropKnowledgeBase
+from .knowledge_base import CreateKnowledgeBase, DropKnowledgeBase, CreateKnowledgeBaseIndex, DropKnowledgeBaseIndex
 from .skills import CreateSkill, DropSkill, UpdateSkill
 
 # remove it in next release
