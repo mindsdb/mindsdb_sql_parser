@@ -106,7 +106,7 @@ class DropKnowledgeBase(ASTNode):
         out_str = f'DROP KNOWLEDGE_BASE {"IF EXISTS " if self.if_exists else ""}{self.name.to_string()}'
         return out_str
 
-class CreateKnowledgeBaseIndexBase(ASTNode):
+class CreateKnowledgeBaseIndex(ASTNode):
     """
     Create a new index in the knowledge base
     """

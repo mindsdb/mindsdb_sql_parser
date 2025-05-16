@@ -1,5 +1,5 @@
 from mindsdb_sql_parser import parse_sql
-from mindsdb_sql_parser.ast.mindsdb.knowledge_base import CreateKnowledgeBaseIndexBase
+from mindsdb_sql_parser.ast.mindsdb.knowledge_base import CreateKnowledgeBaseIndex
 from mindsdb_sql_parser.ast import *
 
 class TestKB:
@@ -10,7 +10,7 @@ class TestKB:
         sql = """CREATE INDEX ON KNOWLEDGE_BASE my_index"""
         ast = parse_sql(sql)
         print(ast)
-        expected_ast = CreateKnowledgeBaseIndexBase(
+        expected_ast = CreateKnowledgeBaseIndex(
             name=Identifier('my_index'),
         )
         assert str(ast).lower() == sql.lower()
