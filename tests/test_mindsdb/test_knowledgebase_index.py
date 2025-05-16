@@ -11,7 +11,7 @@ class TestKB:
         ast = parse_sql(sql)
         print(ast)
         expected_ast = CreateKnowledgeBaseIndex(
-            name=Identifier('my_index'),
+            name=Identifier('my_kb'),
         )
         assert str(ast).lower() == sql.lower()
         assert ast.to_tree() == expected_ast.to_tree()
