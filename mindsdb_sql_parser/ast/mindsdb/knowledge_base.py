@@ -120,7 +120,7 @@ class CreateKnowledgeBaseIndex(ASTNode):
 
     def to_tree(self, *args, level=0, **kwargs):
         ind = indent(level)
-        out_str = f"{ind}CreateIndexBase(name={self.name.to_string()})"
+        out_str = f"{ind}CreateKnowledgeBaseIndex(name={self.name.to_string()})"
         return out_str
 
     def get_string(self, *args, **kwargs):
