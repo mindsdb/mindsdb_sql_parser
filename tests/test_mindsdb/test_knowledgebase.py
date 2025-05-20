@@ -15,7 +15,7 @@ from mindsdb_sql_parser.ast import (
     Insert,
     OrderBy,
 )
-
+from mindsdb_sql_parser.utils import to_single_line  # Added import
 
 class TestKB:
 
@@ -36,6 +36,7 @@ class TestKB:
             from_select=None,
             params={},
         )
+        assert to_single_line(str(ast)) == to_single_line(str(expected_ast))  # Standardized
         assert ast == expected_ast
 
         # using the alias KNOWLEDGE BASE without underscore shall also work
