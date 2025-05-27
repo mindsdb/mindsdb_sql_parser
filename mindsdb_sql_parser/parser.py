@@ -78,6 +78,7 @@ class MindsDBParser(Parser):
        'delete',
        'evaluate',
        'drop_database',
+       'update_database',
        'drop_view',
        'drop_table',
        'create_table',

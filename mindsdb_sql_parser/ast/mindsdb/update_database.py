@@ -1,9 +1,18 @@
 from mindsdb_sql_parser.ast.base import ASTNode
+from mindsdb_sql_parser.ast.select import Identifier
 from mindsdb_sql_parser.utils import indent
 
 
 class UpdateDatabase(ASTNode):
-    def __init__(self, name, updated_params, *args, **kwargs):
+    """
+    Update a database.
+    """
+    def __init__(self, name: Identifier, updated_params: dict, *args, **kwargs):
+        """
+        Args:
+            name: Identifier -- name of the database to update.
+            params: dict -- parameters to update in the database.
+        """
         super().__init__(*args, **kwargs)
         self.name = name
         self.params = updated_params
