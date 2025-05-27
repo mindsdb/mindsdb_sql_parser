@@ -19,6 +19,7 @@ from mindsdb_sql_parser.ast.mindsdb.evaluate import Evaluate
 from mindsdb_sql_parser.ast.mindsdb.knowledge_base import CreateKnowledgeBase, DropKnowledgeBase, \
     CreateKnowledgeBaseIndex, DropKnowledgeBaseIndex
 from mindsdb_sql_parser.ast.mindsdb.skills import CreateSkill, DropSkill, UpdateSkill
+from mindsdb_sql_parser.ast.mindsdb.update_database import UpdateDatabase
 from mindsdb_sql_parser.exceptions import ParsingException
 from mindsdb_sql_parser.ast.mindsdb.retrain_predictor import RetrainPredictor
 from mindsdb_sql_parser.ast.mindsdb.finetune_predictor import FinetunePredictor
@@ -341,6 +342,11 @@ class MindsDBParser(Parser):
        'DROP SCHEMA if_exists_or_empty identifier')
     def drop_database(self, p):
         return DropDatabase(name=p.identifier, if_exists=p.if_exists_or_empty)
+
+    # UPDATE DATABASE
+    @_('UPDATE DATABASE identifier SET kw_parameter_list')
+    def update_database(self, p):
+        return UpdateDatabase(name=p.identifier, updated_params=p.kw_parameter_list)
 
     # Transactions
 
