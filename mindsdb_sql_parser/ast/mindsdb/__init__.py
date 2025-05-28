@@ -1,6 +1,7 @@
 from .agents import CreateAgent, DropAgent, UpdateAgent
 from .create_view import CreateView
 from .create_database import CreateDatabase
+from .update_database import UpdateDatabase
 from .create_predictor import CreatePredictor, CreateAnomalyDetectionModel
 from .drop_predictor import DropPredictor
 from .retrain_predictor import RetrainPredictor
