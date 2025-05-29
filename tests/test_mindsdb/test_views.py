@@ -3,7 +3,7 @@ from mindsdb_sql_parser.ast.mindsdb import *
 from mindsdb_sql_parser.ast import *
 from mindsdb_sql_parser.lexer import MindsDBLexer
 
-class TestCreateView:
+class TestViews:
     def test_create_view_lexer(self):
         sql = "CREATE VIEW my_view FROM integration AS ( SELECT * FROM pred )"
         tokens = list(MindsDBLexer().tokenize(sql))
@@ -31,6 +31,27 @@ class TestCreateView:
         expected_ast = CreateView(name=Identifier('my_view'),
                                   query_str="SELECT * FROM pred")
 
+        assert str(ast) == str(expected_ast)
+        assert ast.to_tree() == expected_ast.to_tree()
+
+    def test_alter_view_full(self):
+        sql = "ALTER VIEW my_view FROM integr AS ( SELECT * FROM pred )"
+        ast = parse_sql(sql)
+        expected_ast = AlterView(
+            name=Identifier('my_view'),
+            from_table=Identifier('integr'),
+            query_str="SELECT * FROM pred"
+        )
+        assert str(ast) == str(expected_ast)
+        assert ast.to_tree() == expected_ast.to_tree()
+
+    def test_alter_view_nofrom(self):
+        sql = "ALTER VIEW my_view AS ( SELECT * FROM pred )"
+        ast = parse_sql(sql)
+        expected_ast = AlterView(
+            name=Identifier('my_view'),
+            query_str="SELECT * FROM pred"
+        )
         assert str(ast) == str(expected_ast)
         assert ast.to_tree() == expected_ast.to_tree()
 

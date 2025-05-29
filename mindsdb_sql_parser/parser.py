@@ -10,6 +10,7 @@ from mindsdb_sql_parser.ast.mindsdb.create_predictor import CreatePredictor, Cre
 from mindsdb_sql_parser.ast.mindsdb.create_database import CreateDatabase
 from mindsdb_sql_parser.ast.mindsdb.create_ml_engine import CreateMLEngine
 from mindsdb_sql_parser.ast.mindsdb.create_view import CreateView
+from mindsdb_sql_parser.ast.mindsdb.alter_view import AlterView
 from mindsdb_sql_parser.ast.mindsdb.create_job import CreateJob
 from mindsdb_sql_parser.ast.mindsdb.chatbot import CreateChatBot, UpdateChatBot, DropChatBot
 from mindsdb_sql_parser.ast.mindsdb.drop_job import DropJob
@@ -78,6 +79,7 @@ class MindsDBParser(Parser):
        'evaluate',
        'drop_database',
        'drop_view',
+       'alter_view',
        'drop_table',
        'create_table',
        'create_job',
@@ -697,6 +699,18 @@ class MindsDBParser(Parser):
                           from_table=p.create_view_from_table_or_nothing,
                           query_str=query_str,
                           if_not_exists=p.if_not_exists_or_empty)
+
+    # ALTER VIEW
+    @_('ALTER VIEW identifier create_view_from_table_or_nothing AS LPAREN raw_query RPAREN',
+       'ALTER VIEW identifier create_view_from_table_or_nothing LPAREN raw_query RPAREN')
+    def alter_view(self, p):
+        query_str = tokens_to_string(p.raw_query)
+
+        return AlterView(
+            name=p.identifier,
+            from_table=p.create_view_from_table_or_nothing,
+            query_str=query_str
+        )
 
     @_('FROM identifier')
     def create_view_from_table_or_nothing(self, p):
