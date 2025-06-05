@@ -21,8 +21,8 @@ class TestEvaluate:
             query_str="SELECT ground_truth, pred FROM table_1",
             using={'adjusted': 1, 'param2': 2},
         )
-        assert to_single_line(str(ast)).lower() == to_single_line(sql).lower()  # Added .lower()
-        assert to_single_line(str(ast)).lower() == to_single_line(str(expected_ast)).lower()  # Added .lower()
+        assert to_single_line(str(ast)).lower() == to_single_line(sql).lower()  
+        assert to_single_line(str(ast)).lower() == to_single_line(str(expected_ast)).lower()  
         assert ast.to_tree() == expected_ast.to_tree()
 
     def test_evaluate_full_2(self):
@@ -33,6 +33,6 @@ class TestEvaluate:
             name=Identifier('r2_score'),
             query_str=query_str,
         )
-        assert to_single_line(str(ast)).lower() == to_single_line(sql).lower()  # Added .lower()
-        assert to_single_line(str(ast)).lower() == to_single_line(str(expected_ast)).lower()  # Added .lower()
+        assert to_single_line(str(ast)).lower() == to_single_line(sql).lower()  
+        assert to_single_line(str(ast)).lower() == to_single_line(str(expected_ast)).lower()  
         assert ast.to_tree() == expected_ast.to_tree()
