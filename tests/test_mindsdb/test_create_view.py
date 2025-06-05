@@ -2,7 +2,7 @@ from mindsdb_sql_parser import parse_sql
 from mindsdb_sql_parser.ast.mindsdb import *
 from mindsdb_sql_parser.ast import *
 from mindsdb_sql_parser.lexer import MindsDBLexer
-from mindsdb_sql_parser.utils import to_single_line  # Added import
+from mindsdb_sql_parser.utils import to_single_line
 
 class TestCreateView:
     def test_create_view_lexer(self):
@@ -22,8 +22,8 @@ class TestCreateView:
                                   from_table=Identifier('integr'),
                                   query_str="SELECT * FROM pred")
 
-        assert to_single_line(str(ast)) == to_single_line(sql)  # Standardized
-        assert to_single_line(str(ast)) == to_single_line(str(expected_ast))  # Standardized
+        assert to_single_line(str(ast)) == to_single_line(sql)
+        assert to_single_line(str(ast)) == to_single_line(str(expected_ast))
         assert ast.to_tree() == expected_ast.to_tree()
 
     def test_create_view_nofrom(self):
@@ -32,7 +32,7 @@ class TestCreateView:
         expected_ast = CreateView(name=Identifier('my_view'),
                                   query_str="SELECT * FROM pred")
 
-        assert to_single_line(str(ast)) == to_single_line(str(expected_ast))  # Standardized
+        assert to_single_line(str(ast)) == to_single_line(str(expected_ast))
         assert ast.to_tree() == expected_ast.to_tree()
 
     # def test_create_dataset_full(self):
