@@ -78,7 +78,7 @@ class Select(ASTNode):
         mode_str = f'\n{ind1}mode={self.mode},' if self.mode else ''
 
         using_str = ''
-        if self.using is not None:
+        if self.using:
             using_str = f'\n{ind1}using={repr(self.using)},'
 
         out_str = f'{ind}Select(' \
@@ -152,8 +152,7 @@ class Select(ASTNode):
         if self.mode is not None:
             out_str += f' {self.mode}'
 
-        if self.using is not None:
-
+        if self.using:
 
             using_ar = []
             for key, value in self.using.items():
