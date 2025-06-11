@@ -1061,25 +1061,35 @@ class MindsDBParser(Parser):
     @_('select UNION select',
        'union UNION select',
        'select UNION ALL select',
-       'union UNION ALL select')
+       'union UNION ALL select',
+       'select UNION DISTINCT select',
+       'union UNION DISTINCT select')
     def union(self, p):
         unique = not hasattr(p, 'ALL')
-        return Union(left=p[0], right=p[2] if unique else p[3], unique=unique)
+        distinct_key = hasattr(p, 'DISTINCT')
+        return Union(left=p[0], right=p[-1], unique=unique, distinct_key=distinct_key)
 
     @_('select INTERSECT select',
        'union INTERSECT select',
        'select INTERSECT ALL select',
-       'union INTERSECT ALL select')
+       'union INTERSECT ALL select',
+       'select INTERSECT DISTINCT select',
+       'union INTERSECT DISTINCT select')
     def union(self, p):
         unique = not hasattr(p, 'ALL')
-        return Intersect(left=p[0], right=p[2] if unique else p[3], unique=unique)
+        distinct_key = hasattr(p, 'DISTINCT')
+        return Intersect(left=p[0], right=p[-1], unique=unique, distinct_key=distinct_key)
+
     @_('select EXCEPT select',
        'union EXCEPT select',
        'select EXCEPT ALL select',
-       'union EXCEPT ALL select')
+       'union EXCEPT ALL select',
+       'select EXCEPT DISTINCT select',
+       'union EXCEPT DISTINCT select')
     def union(self, p):
         unique = not hasattr(p, 'ALL')
-        return Except(left=p[0], right=p[2] if unique else p[3], unique=unique)
+        distinct_key = hasattr(p, 'DISTINCT')
+        return Except(left=p[0], right=p[-1], unique=unique, distinct_key=distinct_key)
 
     # tableau
     @_('LPAREN select RPAREN')

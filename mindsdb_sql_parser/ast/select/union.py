@@ -9,11 +9,13 @@ class CombiningQuery(ASTNode):
                  left,
                  right,
                  unique=True,
+                 distinct_key=False,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.left = left
         self.right = right
         self.unique = unique
+        self.distinct_key = distinct_key
 
         if self.alias:
             self.parentheses = True
@@ -26,7 +28,7 @@ class CombiningQuery(ASTNode):
         right_str = f'\n{ind1}right=\n{self.right.to_tree(level=level + 2)},'
 
         cls_name = self.__class__.__name__
-        out_str = f'{ind}{cls_name}(unique={repr(self.unique)},' \
+        out_str = f'{ind}{cls_name}(unique={repr(self.unique)}, distinct_key={repr(self.distinct_key)}' \
                   f'{left_str}' \
                   f'{right_str}' \
                   f'\n{ind})'
@@ -38,6 +40,8 @@ class CombiningQuery(ASTNode):
         keyword = self.operation
         if not self.unique:
             keyword += ' ALL'
+        if self.distinct_key:
+            keyword += ' DISTINCT'
         out_str = f"""{left_str}\n{keyword}\n{right_str}"""
 
         return out_str

@@ -12,21 +12,26 @@ class TestUnion:
 
     def test_union_base(self):
         for keyword, cls in {'union': Union, 'intersect': Intersect, 'except': Except}.items():
-            sql = f"""SELECT col1 FROM tab1 
-            {keyword} 
-            SELECT col1 FROM tab2"""
+            for rule in ['', 'distinct']:
+                sql = f"""SELECT col1 FROM tab1 
+                {keyword} {rule}
+                SELECT col1 FROM tab2"""
 
-            ast = parse_sql(sql)
-            expected_ast = cls(unique=True,
-                                 left=Select(targets=[Identifier('col1')],
-                                             from_table=Identifier(parts=['tab1']),
-                                             ),
-                                 right=Select(targets=[Identifier('col1')],
-                                             from_table=Identifier(parts=['tab2']),
-                                             ),
-                                 )
-            assert ast.to_tree() == expected_ast.to_tree()
-            assert str(ast) == str(expected_ast)
+                ast = parse_sql(sql)
+                expected_ast = cls(
+                    unique=True,
+                    distinct_key=rule == 'distinct',
+                    left=Select(
+                        targets=[Identifier('col1')],
+                        from_table=Identifier(parts=['tab1']),
+                    ),
+                    right=Select(
+                        targets=[Identifier('col1')],
+                        from_table=Identifier(parts=['tab2']),
+                    ),
+                )
+                assert ast.to_tree() == expected_ast.to_tree()
+                assert str(ast) == str(expected_ast)
 
     def test_union_all(self):
         for keyword, cls in {'union': Union, 'intersect': Intersect, 'except': Except}.items():
