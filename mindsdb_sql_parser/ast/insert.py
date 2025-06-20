@@ -79,7 +79,7 @@ class Insert(ASTNode):
     def get_string(self, *args, **kwargs):
         if self.columns is not None:
             cols = ', '.join([i.name for i in self.columns])
-            columns_str = f'({cols})'
+            columns_str = f' ({cols})'
         else:
             columns_str = ''
 

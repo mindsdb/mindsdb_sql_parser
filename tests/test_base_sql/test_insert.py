@@ -7,7 +7,7 @@ from mindsdb_sql_parser.ast import *
 class TestInsert:
 
     def test_insert(self):
-        sql = "INSERT INTO tbl_name(a, c) VALUES (1, 3), (4, 5)"
+        sql = "INSERT INTO tbl_name (a, c) VALUES (1, 3), (4, 5)"
 
         ast = parse_sql(sql)
         expected_ast = Insert(
@@ -37,7 +37,7 @@ class TestInsert:
         assert ast.to_tree() == expected_ast.to_tree()
 
     def test_insert_from_select(self):
-        sql = "INSERT INTO tbl_name(a, c) SELECT b, d from table2"
+        sql = "INSERT INTO tbl_name (a, c) SELECT b, d from table2"
 
         ast = parse_sql(sql)
         expected_ast = Insert(
@@ -78,7 +78,7 @@ class TestInsertMDB:
     def test_insert_from_union(self):
         from textwrap import dedent
         sql = dedent("""
-           INSERT INTO tbl_name(a, c) SELECT * from table1
+           INSERT INTO tbl_name (a, c) SELECT * from table1
            UNION
            SELECT * from table2""")[1:]
 
