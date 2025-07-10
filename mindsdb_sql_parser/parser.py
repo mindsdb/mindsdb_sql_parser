@@ -103,6 +103,7 @@ class MindsDBParser(Parser):
        'update_agent',
        'create_index',
        'drop_index',
+       'table',
        )
     def query(self, p):
         return p[0]
@@ -2083,3 +2084,39 @@ class MindsDBParser(Parser):
         )
         # don't raise exception
         return
+
+    # region TABLE https://dev.mysql.com/doc/refman/8.4/en/table.html
+    @_('TABLE identifier table_opt_order_by table_opt_limit table_opt_offset')
+    def table(self, p):
+        from mindsdb_sql_parser.ast.table import Table
+        return Table(
+            name=p.identifier,
+            order_by=p.table_opt_order_by,
+            limit=p.table_opt_limit,
+            offset=p.table_opt_offset
+        )
+
+    @_('empty')
+    def table_opt_order_by(self, p):
+        return None
+
+    @_('ORDER_BY ordering_terms')
+    def table_opt_order_by(self, p):
+        return p.ordering_terms
+
+    @_('empty')
+    def table_opt_limit(self, p):
+        return None
+
+    @_('LIMIT constant')
+    def table_opt_limit(self, p):
+        return p.constant
+
+    @_('empty')
+    def table_opt_offset(self, p):
+        return None
+
+    @_('OFFSET constant')
+    def table_opt_offset(self, p):
+        return p.constant
+    # endregion
