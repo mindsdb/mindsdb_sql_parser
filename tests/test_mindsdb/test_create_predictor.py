@@ -124,7 +124,7 @@ class TestCreatePredictor:
         ast = parse_sql(sql)
         expected_ast = CreatePredictor(
             name=Identifier('xxx'),
-            integration_name=Identifier('yyy'),
+            integration_name=Identifier('`yyy`'),
             query_str="SELECT * FROM zzz",
             targets=[Identifier('sss')],
         )

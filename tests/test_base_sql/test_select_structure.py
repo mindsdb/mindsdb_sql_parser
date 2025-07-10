@@ -726,9 +726,10 @@ class TestSelectStructure:
         sql = "SELECT `name`, `status` FROM `mindsdb`.`wow stuff predictors`.`even-dashes-work`.`nice`"
         ast = parse_sql(sql)
 
-        expected_ast = Select(targets=[Identifier(parts=['name']), Identifier(parts=['status'])],
-                              from_table=Identifier(parts=['mindsdb', 'wow stuff predictors', 'even-dashes-work', 'nice']),
-                              )
+        expected_ast = Select(
+            targets=[Identifier('`name`'), Identifier('`status`')],
+            from_table=Identifier('`mindsdb`.`wow stuff predictors`.`even-dashes-work`.`nice`'),
+        )
 
         assert ast.to_tree() == expected_ast.to_tree()
         assert str(ast) == str(expected_ast)
@@ -1224,10 +1225,10 @@ class TestMindsdb:
         sql = 'select `KEY_ID`, `a`.* from `Table1` where `id`=2'
 
         expected_ast = Select(
-            targets=[Identifier('KEY_ID'), Identifier(parts=['a', Star()])],
-            from_table=Identifier(parts=['Table1']),
+            targets=[Identifier('`KEY_ID`'), Identifier(parts=['a', Star()], is_quoted=[True, False])],
+            from_table=Identifier(parts=['Table1'], is_quoted=[True]),
             where=BinaryOperation(op='=', args=[
-                Identifier('id'), Constant(2)
+                Identifier('`id`'), Constant(2)
             ])
         )
 

@@ -31,3 +31,21 @@ class TestAST:
         ident = Identifier('`a`')
         ident2 = deepcopy(ident)
         assert ident2.is_quoted == [True]
+
+    def test_identifier_to_string(self):
+        test_cases = [
+            'test',
+            'Test',
+            'TEST',
+            '`test`',
+            '`Test`',
+            '`TEST`'
+        ]
+
+        for test_case in test_cases:
+            assert Identifier(test_case).to_string() == test_case
+
+        for i in range(len(test_cases)):
+            for test_case in test_cases:
+                test_str = f'{test_case}.{test_cases[i]}'
+                assert Identifier(test_str).to_string() == test_str

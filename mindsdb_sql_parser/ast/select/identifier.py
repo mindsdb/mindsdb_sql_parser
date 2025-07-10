@@ -1,6 +1,6 @@
 import re
 from copy import copy, deepcopy
-from typing import List
+from typing import List, Optional
 
 from mindsdb_sql_parser.ast.base import ASTNode
 from mindsdb_sql_parser.utils import indent
@@ -27,19 +27,28 @@ RESERVED_KEYWORDS = {
 }
 
 
-def get_reserved_words():
-    from mindsdb_sql_parser.lexer import MindsDBLexer
+_reserved_keywords: set[str] = None
 
-    reserved = RESERVED_KEYWORDS
-    for word in MindsDBLexer.tokens:
-        if '_' not in word:
-            # exclude combinations
-            reserved.add(word)
-    return reserved
+
+def get_reserved_words() -> set[str]:
+    global _reserved_keywords
+
+    if _reserved_keywords is None:
+        from mindsdb_sql_parser.lexer import MindsDBLexer
+
+        _reserved_keywords = RESERVED_KEYWORDS
+        for word in MindsDBLexer.tokens:
+            if '_' not in word:
+                # exclude combinations
+                _reserved_keywords.add(word)
+    return _reserved_keywords
 
 
 class Identifier(ASTNode):
-    def __init__(self, path_str=None, parts=None, is_outer=False, with_rollup=False, *args, **kwargs):
+    def __init__(
+            self, path_str=None, parts=None, is_outer=False, with_rollup=False,
+            is_quoted: Optional[List[bool]] = None, *args, **kwargs
+    ):
         super().__init__(*args, **kwargs)
         assert path_str or parts, "Either path_str or parts must be provided for an Identifier"
         assert not (path_str and parts), "Provide either path_str or parts, but not both"
@@ -48,7 +57,7 @@ class Identifier(ASTNode):
 
         if path_str and not parts:
             parts, is_quoted = path_str_to_parts(path_str)
-        else:
+        elif is_quoted is None:
             is_quoted = [False] * len(parts)
         assert isinstance(parts, list)
         self.parts = parts
@@ -63,22 +72,26 @@ class Identifier(ASTNode):
         parts, _ = path_str_to_parts(value)
         return Identifier(parts=parts, *args, **kwargs)
 
-    def parts_to_str(self):
-        out_parts = []
+    def append(self, other: "Identifier") -> None:
+        self.parts += other.parts
+        self.is_quoted += other.is_quoted
+
+    def iter_parts_str(self):
         reserved_words = get_reserved_words()
-        for part in self.parts:
+        for part, is_quoted in zip(self.parts, self.is_quoted):
             if isinstance(part, Star):
                 part = str(part)
             else:
                 if (
-                    not no_wrap_identifier_regex.fullmatch(part)
-                    or
-                    part.upper() in reserved_words
+                    is_quoted
+                    or not no_wrap_identifier_regex.fullmatch(part)
+                    or part.upper() in reserved_words
                 ):
                     part = f'`{part}`'
+            yield part
 
-            out_parts.append(part)
-        return '.'.join(out_parts)
+    def parts_to_str(self):
+        return '.'.join(self.iter_parts_str())
 
     def to_tree(self, *args, level=0, **kwargs):
         alias_str = f', alias={self.alias.to_tree()}' if self.alias else ''

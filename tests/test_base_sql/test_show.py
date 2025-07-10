@@ -88,12 +88,12 @@ class TestShow:
         assert ast.to_tree() == expected_ast.to_tree()
 
     def test_full_columns(self):
-        sql = "SHOW FULL COLUMNS FROM `concrete` FROM `files`"
+        sql = "SHOW FULL COLUMNS FROM `ccc` FROM `fff`"
         ast = parse_sql(sql)
         expected_ast = Show(
             category='COLUMNS',
             modes=['FULL'],
-            from_table=Identifier('files.concrete')
+            from_table=Identifier('`fff`.`ccc`')
         )
 
         assert str(ast) == str(expected_ast)

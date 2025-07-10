@@ -82,7 +82,4 @@ def test_standard_render():
 
         # inject function
         module.parse_sql = parse_sql2
-
         check_module(module)
-
-

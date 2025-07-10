@@ -42,11 +42,11 @@ class TestMySQLParser:
         assert str(ast) == str(expected_ast)
 
     def test_show_index(self):
-        sql = "SHOW INDEX FROM predictors"
+        sql = "SHOW INDEX FROM `predictors`"
         ast = parse_sql(sql)
         expected_ast = Show(
             category='INDEX',
-            from_table=Identifier('predictors')
+            from_table=Identifier('`predictors`')
         )
 
         assert str(ast).lower() == sql.lower()
@@ -54,11 +54,11 @@ class TestMySQLParser:
         assert ast.to_tree() == expected_ast.to_tree()
 
     def test_show_index_from_db(self):
-        sql = "SHOW INDEX FROM predictors FROM db"
+        sql = "SHOW INDEX FROM `predictors` FROM db"
         ast = parse_sql(sql)
         expected_ast = Show(
             category='INDEX',
-            from_table=Identifier('db.predictors'),
+            from_table=Identifier('db.`predictors`'),
         )
 
         # assert str(ast).lower() == sql.lower()

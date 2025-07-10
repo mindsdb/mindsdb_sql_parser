@@ -53,8 +53,8 @@ class Show(ASTNode):
         from_str = ''
         if self.from_table:
             ar = [
-                f'FROM {i}'
-                for i in self.from_table.parts
+                f'FROM {part}'
+                for part in self.from_table.iter_parts_str()
             ]
             ar.reverse()
             from_str = ' ' + ' '.join(ar)
