@@ -165,7 +165,7 @@ class MindsDBParser(Parser):
     # -- Skills --
     @_('CREATE SKILL if_not_exists_or_empty identifier USING kw_parameter_list')
     def create_skill(self, p):
-        params = p.kw_parameter_list
+        params = {k.lower(): v for k, v in p.kw_parameter_list.items()}
 
         return CreateSkill(
             name=p.identifier,
@@ -180,12 +180,12 @@ class MindsDBParser(Parser):
 
     @_('UPDATE SKILL identifier SET kw_parameter_list')
     def update_skill(self, p):
-        return UpdateSkill(name=p.identifier, updated_params=p.kw_parameter_list)
+        return UpdateSkill(name=p.identifier, updated_params={k.lower(): v for k, v in p.kw_parameter_list.items()})
 
     # -- Agent --
     @_('CREATE AGENT if_not_exists_or_empty identifier USING kw_parameter_list')
     def create_agent(self, p):
-        params = p.kw_parameter_list
+        params = {k.lower(): v for k, v in p.kw_parameter_list.items()}
 
         return CreateAgent(
             name=p.identifier,
@@ -200,12 +200,12 @@ class MindsDBParser(Parser):
     
     @_('UPDATE AGENT identifier SET kw_parameter_list')
     def update_agent(self, p):
-        return UpdateAgent(name=p.identifier, updated_params=p.kw_parameter_list)
+        return UpdateAgent(name=p.identifier, updated_params={k.lower(): v for k, v in p.kw_parameter_list.items()})
 
     # -- ChatBot --
     @_('CREATE CHATBOT identifier USING kw_parameter_list')
     def create_chat_bot(self, p):
-        params = p.kw_parameter_list
+        params = {k.lower(): v for k, v in p.kw_parameter_list.items()}
 
         database = Identifier(params.pop('database'))
         model_param = params.pop('model', None)
@@ -224,7 +224,7 @@ class MindsDBParser(Parser):
 
     @_('UPDATE CHATBOT identifier SET kw_parameter_list')
     def update_chat_bot(self, p):
-        return UpdateChatBot(name=p.identifier, updated_params=p.kw_parameter_list)
+        return UpdateChatBot(name=p.identifier, updated_params={k.lower(): v for k, v in p.kw_parameter_list.items()})
 
     @_('DROP CHATBOT identifier')
     def drop_chat_bot(self, p):
