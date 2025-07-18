@@ -1,19 +1,15 @@
 from mindsdb_sql_parser.ast.base import ASTNode
 from mindsdb_sql_parser.exceptions import ParsingException
 from mindsdb_sql_parser.utils import indent
-from mindsdb_sql_parser.ast.select.tuple import Tuple
+
 
 class Operation(ASTNode):
     def __init__(self, op, args, *args_, **kwargs):
         super().__init__(*args_, **kwargs)
 
         self.op = ' '.join(op.lower().split())
-        self.args = []
-        for item in args:
-            if self.op in ("in", "not in") and isinstance(item, ASTNode) and item.parentheses:
-                item.parentheses = False
-                item = Tuple([item])
-            self.args.append(item)
+        self.args = list(args)
+
         self.assert_arguments()
 
     def assert_arguments(self):

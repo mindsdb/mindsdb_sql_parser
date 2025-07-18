@@ -1673,6 +1673,12 @@ class MindsDBParser(Parser):
             arg1 = Last()
         else:
             arg1 = p[2]
+
+        op = p[1]
+        if op.lower() in ("in", "not in") and isinstance(arg1, Constant) and arg1.parentheses:
+            arg1.parentheses = False
+            arg1 = Tuple([arg1])
+
         return BinaryOperation(op=p[1], args=(p[0], arg1))
 
     @_('MINUS expr %prec UMINUS',
