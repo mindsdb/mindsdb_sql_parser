@@ -60,3 +60,31 @@ class TestSkills:
         # Parse again after rendering to catch problems with rendering.
         ast = parse_sql(str(ast))
         assert str(ast) == str(expected_ast)
+
+    def test_create_skill_case_handling(self):
+        sql = """
+            CREATE SKILL my_skill
+            USING
+                TyPe = 'knowledge_base',
+                SoUrCe = 'my_knowledge_base'
+        """
+        ast = parse_sql(sql)
+        expected_ast = CreateSkill(
+            name=Identifier('my_skill'),
+            type='knowledge_base',
+            params={'source': 'my_knowledge_base'}
+        )
+        assert ast.to_tree() == expected_ast.to_tree()
+
+    def test_update_skill_case_handling(self):
+        sql = """
+            UPDATE SKILL my_skill
+            SET
+                SoUrCe = 'new_source'
+        """
+        ast = parse_sql(sql)
+        expected_ast = UpdateSkill(
+            name=Identifier('my_skill'),
+            updated_params={'source': 'new_source'}
+        )
+        assert ast.to_tree() == expected_ast.to_tree()
