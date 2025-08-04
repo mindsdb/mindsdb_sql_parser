@@ -45,7 +45,7 @@ class TestSpecificSelects:
     def test_native_query(self):
         sql = """
            SELECT status 
-           FROM int1 (select q from p from r) 
+           FROM int1 (select q from p from r where x = 'test''test') 
            group by 1
            limit 1
         """
@@ -54,7 +54,7 @@ class TestSpecificSelects:
             targets=[Identifier('status')],
             from_table=NativeQuery(
                 integration=Identifier('int1'),
-                query='select q from p from r'
+                query="select q from p from r where x = 'test''test'"
             ),
             limit=Constant(1),
             group_by=[Constant(1)]
