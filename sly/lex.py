@@ -74,9 +74,9 @@ class Token(object):
     '''
     Representation of a single token.
     '''
-    __slots__ = ('type', 'value', 'lineno', 'index', 'end')
+    __slots__ = ('type', 'value', 'lineno', 'index', 'end', 'raw_value')
     def __repr__(self):
-        return f'Token(type={self.type!r}, value={self.value!r}, lineno={self.lineno}, index={self.index}, end={self.end})'
+        return f'Token(type={self.type!r}, value={self.value!r}, lineno={self.lineno}, index={self.index}, end={self.end}, raw_value={self.raw_value!r})'
 
 class TokenStr(str):
     @staticmethod

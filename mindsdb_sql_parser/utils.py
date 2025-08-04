@@ -59,7 +59,7 @@ def to_single_line(text):
     return text
 
 
-def tokens_to_string(tokens):
+def tokens_to_string(tokens, use_raw_values: bool = False):
     # converts list of token (after lexer) to original string
 
     line_num = tokens[0].lineno
@@ -81,10 +81,15 @@ def tokens_to_string(tokens):
         # filling space between tokens
         line += ' '*(token.index - shift - len(line))
 
-        # add token
-        line += token.value
+        if use_raw_values and hasattr(token, 'raw_value'):
+            value = token.raw_value or token.value
+        else:
+            value = token.value
 
-        last_pos = token.index + len(token.value)
+        # add token
+        line += value
+
+        last_pos = token.index + len(value)
 
     # last line
     content += line

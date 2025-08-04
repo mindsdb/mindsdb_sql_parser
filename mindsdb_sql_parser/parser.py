@@ -1308,7 +1308,7 @@ class MindsDBParser(Parser):
     def from_table(self, p):
         query = NativeQuery(
             integration=p.identifier,
-            query=tokens_to_string(p.raw_query)
+            query=tokens_to_string(p.raw_query, use_raw_values=True)
         )
         return query
 
