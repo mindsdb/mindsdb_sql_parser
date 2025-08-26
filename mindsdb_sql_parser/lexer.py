@@ -76,6 +76,7 @@ class MindsDBLexer(Lexer):
         AND, OR, NOT, IS, IS_NOT, TYPECAST,
         IN, NOT_IN, LIKE, NOT_LIKE, CONCAT, BETWEEN, WINDOW, OVER, PARTITION_BY,
         VECT_L2, VECT_L1, VECT_INNER, VECT_COS, VECT_HAMM, VECT_JACC,
+        ARR_CONTAINS, ARR_CONTAINED, ARR_OVERLAP,
         JSON_GET, JSON_GET_STR, INTERVAL,
 
         # Data types
@@ -290,6 +291,10 @@ class MindsDBLexer(Lexer):
     VECT_COS = r'<=>'
     VECT_HAMM = r'<~>'
     VECT_JACC = r'<%>'
+
+    ARR_CONTAINS = r'@>'
+    ARR_CONTAINED = r'<@'
+    ARR_OVERLAP = r'&&'
 
     JSON_GET_STR = r'->>'
     JSON_GET = r'->'

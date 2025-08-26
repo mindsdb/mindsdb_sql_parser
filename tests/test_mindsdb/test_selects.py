@@ -225,3 +225,22 @@ class TestSpecificSelects:
         assert ast.to_tree() == expected_ast.to_tree()
         assert str(ast) == str(expected_ast)
 
+    def test_array(self):
+        for op in ['@>', '<@', '&&']:
+            sql = f"SELECT * from TAB1 WHERE a {op} b"
+
+            ast = parse_sql(sql)
+            expected_ast = Select(
+                targets=[Star()],
+                where=BinaryOperation(
+                    op=op,
+                    args=[
+                        Identifier('a'),
+                        Identifier('b')
+                    ]
+                ),
+                from_table=Identifier(parts=['TAB1']),
+            )
+
+            assert ast.to_tree() == expected_ast.to_tree()
+            assert str(ast) == str(expected_ast)

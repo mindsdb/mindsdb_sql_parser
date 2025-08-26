@@ -1664,6 +1664,9 @@ class MindsDBParser(Parser):
        'expr JSON_GET constant',
        'expr JSON_GET_STR constant',
        'expr NOT_IN expr',
+       'expr ARR_CONTAINS expr',
+       'expr ARR_CONTAINED expr',
+       'expr ARR_OVERLAP expr',
        'expr IN expr',)
     def expr(self, p):
         if p[1] == ':=':
