@@ -78,3 +78,33 @@ class TestChatbots:
         )
         assert str(ast) == str(expected_ast)
         assert ast.to_tree() == expected_ast.to_tree()
+
+    def test_create_chatbot_case_handling(self):
+        sql = """
+            CREATE CHATBOT my_chatbot
+            USING
+                DaTaBaSe = 'my_db',
+                MoDeL = 'my_model',
+                AgEnT = 'my_agent'
+        """
+        ast = parse_sql(sql)
+        expected_ast = CreateChatBot(
+            name=Identifier('my_chatbot'),
+            database=Identifier('my_db'),
+            model=Identifier('my_model'),
+            agent=Identifier('my_agent')
+        )
+        assert ast.to_tree() == expected_ast.to_tree()
+
+    def test_update_chatbot_case_handling(self):
+        sql = """
+            UPDATE CHATBOT my_chatbot
+            SET
+                MoDeL = 'new_model'
+        """
+        ast = parse_sql(sql)
+        expected_ast = UpdateChatBot(
+            name=Identifier('my_chatbot'),
+            updated_params={'model': 'new_model'}
+        )
+        assert ast.to_tree() == expected_ast.to_tree()

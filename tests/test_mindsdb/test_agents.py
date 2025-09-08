@@ -70,3 +70,32 @@ class TestAgents:
         # Parse again after rendering to catch problems with rendering.
         ast = parse_sql(str(ast))
         assert str(ast) == str(expected_ast)
+
+    def test_create_agent_case_handling(self):
+        sql = """
+            CREATE AGENT my_agent
+            USING
+                MoDeL = 'my_model',
+                SkIlLs = ['skill1', 'skill2']
+        """
+        ast = parse_sql(sql)
+        expected_ast = CreateAgent(
+            name=Identifier('my_agent'),
+            model='my_model',
+            params={'skills': ['skill1', 'skill2']}
+        )
+        assert ast.to_tree() == expected_ast.to_tree()
+
+    def test_update_agent_case_handling(self):
+        sql = """
+            UPDATE AGENT my_agent
+            SET
+                MoDeL = 'new_model',
+                SkIlLs = ['new_skill1', 'new_skill2']
+        """
+        ast = parse_sql(sql)
+        expected_ast = UpdateAgent(
+            name=Identifier('my_agent'),
+            updated_params={'model': 'new_model', 'skills': ['new_skill1', 'new_skill2']}
+        )
+        assert ast.to_tree() == expected_ast.to_tree()
