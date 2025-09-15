@@ -1,3 +1,5 @@
+import re
+
 from sly import Parser
 from mindsdb_sql_parser.ast import *
 from mindsdb_sql_parser.ast.drop import DropDatabase, DropView
@@ -559,7 +561,8 @@ class MindsDBParser(Parser):
     def show(self, p):
         modes = getattr(p, 'show_modifier_list', None)
         return Show(
-            category=p.show_category,
+            # replace multiple spaces
+            category=re.sub(r"[\s]+", " ", p.show_category),
             modes=modes
         )
 
@@ -1195,12 +1198,12 @@ class MindsDBParser(Parser):
 
     @_('ordering_term NULLS_FIRST')
     def ordering_term(self, p):
-        p.ordering_term.nulls = p.NULLS_FIRST
+        p.ordering_term.nulls = 'NULLS FIRST'
         return p.ordering_term
 
     @_('ordering_term NULLS_LAST')
     def ordering_term(self, p):
-        p.ordering_term.nulls = p.NULLS_LAST
+        p.ordering_term.nulls = 'NULLS LAST'
         return p.ordering_term
 
     @_('ordering_term DESC')

@@ -52,7 +52,7 @@ class TestKB:
 
         # the order of MODEL and STORAGE should not matter
         sql = """
-            CREATE KNOWLEDGE_BASE my_knowledge_base
+            CREATE KNOWLEDGE   BASE my_knowledge_base
             USING
                 STORAGE = my_vector_database.some_table,
                 MODEL = mindsdb.my_embedding_model
@@ -224,7 +224,7 @@ class TestKB:
 
         # without underscore shall also work
         sql = """
-            SHOW KNOWLEDGE BASES
+            SHOW KNOWLEDGE \n BASES
         """
         ast = parse_sql(sql)
         expected_ast = Show(

@@ -294,7 +294,7 @@ class TestSelectStructure:
         ast = parse_sql(sql)
         assert str(ast).lower() == sql.lower()
 
-        sql = f'SELECT column FROM tab WHERE column != 1 GROUP BY column1, column2'
+        sql = f'SELECT column FROM tab WHERE column != 1 GROUP  BY column1, column2'
         ast = parse_sql(sql)
 
         assert isinstance(ast, Select)
@@ -314,7 +314,7 @@ class TestSelectStructure:
         assert isinstance(ast.group_by[1], Identifier)
         assert ast.group_by[1].parts[0] == 'column2'
 
-        assert str(ast).lower() == sql.lower()
+        assert str(ast).lower() == sql.lower().replace("  ", " ")
 
     def test_select_group_by_elaborate(self):
         query = """SELECT column1, column2, sum(column3) AS total FROM t1 GROUP BY column1, column2"""
@@ -356,7 +356,7 @@ class TestSelectStructure:
         assert str(parse_sql(sql)) == sql
 
     def test_select_order_by_elaborate(self):
-        sql = """SELECT * FROM t1 ORDER BY column1 ASC, column2, column3 DESC NULLS FIRST"""
+        sql = """SELECT * FROM t1 ORDER  BY column1 ASC, column2, column3 DESC NULLS  FIRST"""
         ast = parse_sql(sql)
         expected_ast = Select(targets=[Star()],
                                from_table=Identifier(parts=['t1']),
@@ -367,18 +367,18 @@ class TestSelectStructure:
                                            nulls='NULLS FIRST')],
                                )
 
-        assert str(ast).lower() == sql.lower()
+        assert str(ast).lower() == sql.replace("  ", " ").lower()
         assert ast.to_tree() == expected_ast.to_tree()
         assert str(ast) == str(expected_ast)
 
     def test_select_aliases_order_by(self):
-        sql = "select max(name) as `max(name)` from tbl order by `max(name)`"
+        sql = "select max(name) as `max(name)` from tbl order by `max(name)` NULLS  LAST"
 
         ast = parse_sql(sql)
 
         expected_ast = Select(targets=[Function('max', args=[Identifier('name')], alias=Identifier('max(name)'))],
                               from_table=Identifier('tbl'),
-                              order_by=[OrderBy(Identifier('max(name)'))])
+                              order_by=[OrderBy(Identifier('max(name)'), nulls='NULLS LAST')])
 
         assert ast.to_tree() == expected_ast.to_tree()
 
@@ -829,7 +829,7 @@ class TestSelectStructure:
         assert ast.to_tree() == expected_ast.to_tree()
 
         # no order by
-        query = "select SUM(col0) OVER (PARTITION BY col1) from table1 "
+        query = "select SUM(col0) OVER (PARTITION  BY col1) from table1 "
         expected_ast = Select(
             targets=[
                 WindowFunction(

@@ -29,7 +29,7 @@ class TestOracle:
 
     def test_limit(self):
         for keyword in ('NEXT', 'FIRST'):
-            sql = f"SELECT * FROM customer FETCH {keyword} 10 ROWS ONLY"
+            sql = f"SELECT * FROM customer FETCH  {keyword} 10 ROWS ONLY"
 
             ast = parse_sql(sql)
             expected_ast = Select(
