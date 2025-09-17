@@ -113,7 +113,7 @@ class TestCreateMindsdb:
 
         sql = f'''
          CREATE TABLE mydb.Persons(
-            PersonID INT PRIMARY KEY,
+            PersonID INT PRIMARY   KEY,
             name TEXT NULL   
          )
         '''
