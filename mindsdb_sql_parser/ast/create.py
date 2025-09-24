@@ -95,6 +95,8 @@ class CreateTable(ASTNode):
                         type = 'float'
                     elif issubclass(col.type, sa_types.Text):
                         type = 'text'
+                    elif hasattr(col.type, '__visit_name__'):
+                        type = col.type.__visit_name__
                 else:
                     type = str(col.type)
                 if col.length is not None:

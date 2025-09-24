@@ -1,4 +1,5 @@
 import pytest
+from sqlalchemy import types as sa_types
 
 from mindsdb_sql_parser import parse_sql
 from mindsdb_sql_parser.ast import *
@@ -178,3 +179,16 @@ class TestCreateMindsdb:
         assert str(ast).lower() == str(expected_ast).lower()
         assert ast.to_tree() == expected_ast.to_tree()
 
+        # test dump of sqlalchemy types
+        create_table_ast = CreateTable(
+            name=Identifier('mydb.Persons'),
+            columns=[
+                TableColumn(name='PersonID', type=sa_types.Integer),
+                TableColumn(name='LastName', type=sa_types.Text),
+                TableColumn(name='CreatedAt', type=sa_types.Date),
+            ]
+        )
+
+        expected_sql = "CREATE TABLE mydb.Persons (PersonID int, LastName text, CreatedAt date)"
+
+        assert ' '.join(create_table_ast.to_string().split()) == expected_sql
