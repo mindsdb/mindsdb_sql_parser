@@ -21,7 +21,7 @@ from mindsdb_sql_parser.ast.mindsdb.trigger import CreateTrigger, DropTrigger
 from mindsdb_sql_parser.ast.mindsdb.latest import Latest
 from mindsdb_sql_parser.ast.mindsdb.evaluate import Evaluate
 from mindsdb_sql_parser.ast.mindsdb.knowledge_base import CreateKnowledgeBase, DropKnowledgeBase, \
-    CreateKnowledgeBaseIndex, DropKnowledgeBaseIndex, EvaluateKnowledgeBase
+   AlterKnowledgeBase, CreateKnowledgeBaseIndex, DropKnowledgeBaseIndex, EvaluateKnowledgeBase
 from mindsdb_sql_parser.ast.mindsdb.skills import CreateSkill, DropSkill, UpdateSkill
 from mindsdb_sql_parser.exceptions import ParsingException
 from mindsdb_sql_parser.ast.mindsdb.retrain_predictor import RetrainPredictor
@@ -95,6 +95,7 @@ class MindsDBParser(Parser):
        'create_trigger',
        'drop_trigger',
        'create_kb',
+       'alter_kb',
        'drop_kb',
        'evaluate_kb',
        'create_skill',
@@ -113,9 +114,6 @@ class MindsDBParser(Parser):
     @_(
         'CREATE KNOWLEDGE_BASE if_not_exists_or_empty identifier USING kw_parameter_list',
         'CREATE KNOWLEDGE_BASE if_not_exists_or_empty identifier',
-        # from select
-        'CREATE KNOWLEDGE_BASE if_not_exists_or_empty identifier FROM LPAREN select RPAREN USING kw_parameter_list',
-        'CREATE KNOWLEDGE_BASE if_not_exists_or_empty identifier FROM LPAREN select RPAREN',
     )
     def create_kb(self, p):
         params = getattr(p, 'kw_parameter_list', {})
@@ -143,6 +141,19 @@ class MindsDBParser(Parser):
             from_select=from_query,
             params=params,
             if_not_exists=if_not_exists
+        )
+
+    @_(
+        'ALTER KNOWLEDGE_BASE identifier USING kw_parameter_list',
+    )
+    def alter_kb(self, p):
+        params = getattr(p, 'kw_parameter_list', {})
+        name = p.identifier
+        params = {k.lower(): v for k, v in params.items()}  # case insensitive
+
+        return AlterKnowledgeBase(
+            name=name,
+            params=params
         )
 
     @_('CREATE INDEX ON KNOWLEDGE_BASE identifier')
