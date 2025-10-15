@@ -89,3 +89,57 @@ def tokens_to_string(tokens):
     # last line
     content += line
     return content
+
+
+def unquote(s, is_double_quoted=False):
+    s = s.replace('\\"', '"').replace("\\'", "'")
+    if is_double_quoted:
+        s = s.replace('""', '"')
+    else:
+        s = s.replace("''", "'")
+    return s
+
+
+def dump_json(obj) -> str:
+    '''
+       dump dict into json-like string using:
+       - single quotes for strings
+       - the same quoting rules as `unquote` function
+    '''
+
+
+    if isinstance(obj, dict):
+        items = []
+        for k, v in obj.items():
+            # keys must be strings in JSON
+            if not isinstance(k, str):
+                k = str(k)
+            items.append(f'{dump_json(k)}: {dump_json(v)}')
+        return "{" + ", ".join(items) + "}"
+
+    if isinstance(obj, (list, tuple)):
+        items = [
+            dump_json(i) for i in obj
+        ]
+        return "[" + ", ".join(items) + "]"
+
+    if isinstance(obj, str):
+        obj = obj.replace("'", "''")
+        return f"'{obj}'"
+
+    if isinstance(obj, (int, float)):
+        if obj != obj:  # NaN
+            return "null"
+        if obj == float('inf'):
+            return "null"
+        if obj == float('-inf'):
+            return "null"
+        return str(obj)
+
+    if obj is None:
+        return "null"
+
+    if isinstance(obj, bool):
+        return "true" if obj else "false"
+
+    return dump_json(str(obj))

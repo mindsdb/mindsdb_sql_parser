@@ -26,7 +26,7 @@ from mindsdb_sql_parser.ast.mindsdb.skills import CreateSkill, DropSkill, Update
 from mindsdb_sql_parser.exceptions import ParsingException
 from mindsdb_sql_parser.ast.mindsdb.retrain_predictor import RetrainPredictor
 from mindsdb_sql_parser.ast.mindsdb.finetune_predictor import FinetunePredictor
-from mindsdb_sql_parser.utils import ensure_select_keyword_order, JoinType, tokens_to_string
+from mindsdb_sql_parser.utils import ensure_select_keyword_order, JoinType, tokens_to_string, unquote
 from mindsdb_sql_parser.logger import ParserLogger
 
 from mindsdb_sql_parser.lexer import MindsDBLexer
@@ -2024,11 +2024,11 @@ class MindsDBParser(Parser):
 
     @_('QUOTE_STRING')
     def quote_string(self, p):
-        return p[0].replace('\\"', '"').replace("\\'", "'").replace("''", "'").strip('\'')
+        return unquote(p[0]).strip('\'')
 
     @_('DQUOTE_STRING')
     def dquote_string(self, p):
-        return p[0].replace('\\"', '"').replace("\\'", "'").strip('\"')
+        return unquote(p[0], is_double_quoted=True).strip('\"')
 
     # for raw query
 
