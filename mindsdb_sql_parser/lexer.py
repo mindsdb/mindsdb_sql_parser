@@ -353,7 +353,7 @@ class MindsDBLexer(Lexer):
     def QUOTE_STRING(self, t):
         return t
 
-    @_(r'"(?:\\.|[^"])*"')
+    @_(r'"(?:\\.|[^"])*(?:""(?:\\.|[^"])*)*"')
     def DQUOTE_STRING(self, t):
         return t
 

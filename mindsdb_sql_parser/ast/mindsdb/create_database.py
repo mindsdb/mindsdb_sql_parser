@@ -1,6 +1,5 @@
-import json
 from mindsdb_sql_parser.ast.base import ASTNode
-from mindsdb_sql_parser.utils import indent
+from mindsdb_sql_parser.utils import indent, dump_json
 
 
 class CreateDatabase(ASTNode):
@@ -49,6 +48,6 @@ class CreateDatabase(ASTNode):
 
         parameters_str = ''
         if self.parameters:
-            parameters_str = f', PARAMETERS = {json.dumps(self.parameters)}'
+            parameters_str = f', PARAMETERS = {dump_json(self.parameters)}'
         out_str = f'CREATE{replace_str} DATABASE {"IF NOT EXISTS " if self.if_not_exists else ""}{self.name.to_string()} {engine_str}{parameters_str}'
         return out_str

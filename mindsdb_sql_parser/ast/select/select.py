@@ -1,8 +1,8 @@
 from typing import List, Union
-import json
 from mindsdb_sql_parser.ast.base import ASTNode
-from mindsdb_sql_parser.utils import indent
+from mindsdb_sql_parser.utils import indent, dump_json
 from mindsdb_sql_parser.ast.select.operation import Object
+
 
 class Select(ASTNode):
 
@@ -158,7 +158,7 @@ class Select(ASTNode):
             for key, value in self.using.items():
                 if isinstance(value, Object):
                     args = [
-                        f'{k}={json.dumps(v)}'
+                        f'{k}={dump_json(v)}'
                         for k, v in value.params.items()
                     ]
                     args_str = ', '.join(args)
@@ -166,7 +166,7 @@ class Select(ASTNode):
                 if isinstance(value, Identifier):
                     value = value.to_string()
                 else:
-                    value = json.dumps(value)
+                    value = dump_json(value)
 
                 using_ar.append(f'{Identifier(key).to_string()}={value}')
 
