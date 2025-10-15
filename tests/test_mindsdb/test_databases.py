@@ -140,7 +140,7 @@ class TestDatabases:
 
     def test_parser_render(self):
 
-        password = "a dm\\in123\"_.,';:!@#$%^&*()\n<>`{}[]"
+        value = "a dm\\in123\"_.,';:!@#$%^&*()\n<>`{}[]"
 
         '''
         quoting rules:
@@ -151,16 +151,16 @@ class TestDatabases:
             sql = f"""
                CREATE DATABASE db WITH engine = 'postgres' 
                PARAMETERS = {{ 
-                  'password': {symbol}{password.replace(symbol, symbol * 2)}{symbol}
+                  'password': {symbol}{value.replace(symbol, symbol * 2)}{symbol}
                }}
             """
 
             # check parsing
             query = parse_sql(sql)
-            assert query.parameters['password'] == password
+            assert query.parameters['password'] == value
 
             # check render
             sql2 = str(query)
             query2 = parse_sql(sql2)
-            assert query2.parameters['password'] == password
+            assert query2.parameters['password'] == value
 
