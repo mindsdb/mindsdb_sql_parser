@@ -119,7 +119,6 @@ class TestDatabases:
         assert str(ast).lower() == str(expected_ast).lower()
         assert ast.to_tree() == expected_ast.to_tree()
 
-
     def test_create_database_using(self):
 
         sql = "CREATE DATABASE db using ENGINE = 'mysql', PARAMETERS = {'A': 1}"
@@ -130,7 +129,6 @@ class TestDatabases:
         assert str(ast).lower() == str(expected_ast).lower()
         assert ast.to_tree() == expected_ast.to_tree()
 
-
     def test_alter_database(self):
         sql = "ALTER DATABASE db PARAMETERS = {'A': 1, 'B': 2}"
         ast = parse_sql(sql)
@@ -139,3 +137,30 @@ class TestDatabases:
 
         assert str(ast) == str(expected_ast)
         assert ast.to_tree() == expected_ast.to_tree()
+
+    def test_parser_render(self):
+
+        value = "a dm\\in123\"_.,';:!@#$%^&*()\n<>`{}[]"
+
+        '''
+        quoting rules:
+          ' => '' (in single quoted strings)
+          " => "" (in double quoted strings)
+        '''
+        for symbol in ("'", '"'):
+            sql = f"""
+               CREATE DATABASE db WITH engine = 'postgres' 
+               PARAMETERS = {{ 
+                  'password': {symbol}{value.replace(symbol, symbol * 2)}{symbol}
+               }}
+            """
+
+            # check parsing
+            query = parse_sql(sql)
+            assert query.parameters['password'] == value
+
+            # check render
+            sql2 = str(query)
+            query2 = parse_sql(sql2)
+            assert query2.parameters['password'] == value
+
