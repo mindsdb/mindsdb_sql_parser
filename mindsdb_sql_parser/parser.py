@@ -1885,6 +1885,8 @@ class MindsDBParser(Parser):
     @_('id', 'dquote_string')
     def identifier(self, p):
         value = p[0]
+        if hasattr(p, 'dquote_string'):
+            return Identifier(parts=[value], is_quoted=[True])
         return Identifier(value)
 
     @_('PARAMETER')
