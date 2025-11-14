@@ -37,6 +37,17 @@ class TestMDBParser:
         assert str(ast).lower() == sql.lower()
         assert str(ast) == str(expected_ast)
 
+    def test_set(self):
+        for value in (0, 1, 'TRUE', 'FALSE', 'ON', 'OFF'):
+            sql = f"set @@session.autocommit={value}"
+            ast = parse_sql(sql)
+            expected_ast = Set(
+                name=Variable('session.autocommit', is_system_var=True),
+                value=Constant(value, with_quotes=False)
+            )
+            assert str(ast).lower() == sql.lower()
+            assert str(ast) == str(expected_ast)
+
     def test_mysql(self):
         sql = 'select @@session.auto_increment_increment, @@character_set_client'
         ast = parse_sql(sql)
