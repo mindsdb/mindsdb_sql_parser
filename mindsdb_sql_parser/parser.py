@@ -1755,6 +1755,10 @@ class MindsDBParser(Parser):
     def constant(self, p):
         return Constant(value=False)
 
+    @_('ON')
+    def constant(self, p):
+        return Constant(value='ON', with_quotes=False)
+
     @_('integer')
     def constant(self, p):
         return Constant(value=int(p.integer))
