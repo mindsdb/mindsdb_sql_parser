@@ -272,7 +272,6 @@ class MindsDBLexer(Lexer):
     COMMA = r','
     LPAREN = r'\('
     RPAREN = r'\)'
-    PARAMETER = r'\?'
 
     ASSIGN_COLON = r':='
 
@@ -281,7 +280,6 @@ class MindsDBLexer(Lexer):
     RBRACE = r'\}'
     LBRACKET = r'\['
     RBRACKET = r'\]'
-    COLON = r'\:'
     SEMICOLON = r'\;'
 
     # Operators
@@ -336,6 +334,13 @@ class MindsDBLexer(Lexer):
     NULL = r'\bNULL\b'
     TRUE = r'\bTRUE\b'
     FALSE = r'\bFALSE\b'
+
+    @_(r':[a-zA-Z]{1}[a-zA-Z_\d]*', r'\?')
+    def PARAMETER(self, t):
+        t.value = t.value.lstrip(':')
+        return t
+
+    COLON = r'\:'
 
     @_(r'(?:([a-zA-Z_$0-9]*[a-zA-Z_$]+[a-zA-Z_$0-9]*)|(?:`([^`]+)`))')
     def ID(self, t):
