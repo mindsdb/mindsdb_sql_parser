@@ -157,8 +157,12 @@ class MindsDBParser(Parser):
         )
 
     @_('CREATE INDEX ON KNOWLEDGE_BASE identifier')
+    @_('CREATE INDEX ON KNOWLEDGE_BASE identifier WITH LPAREN kw_parameter_list RPAREN')
     def create_index(self, p):
-        return CreateKnowledgeBaseIndex(name=p.identifier)
+        params = None
+        if hasattr(p, 'kw_parameter_list'):
+            params = p.kw_parameter_list
+        return CreateKnowledgeBaseIndex(name=p.identifier, params=params)
 
     @_('DROP INDEX ON KNOWLEDGE_BASE identifier')
     def  drop_index(self, p):
