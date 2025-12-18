@@ -81,10 +81,18 @@ def tokens_to_string(tokens):
         # filling space between tokens
         line += ' '*(token.index - shift - len(line))
 
-        # add token
-        line += token.value
+        match token.type:
+            case 'VARIABLE':
+                token_value = '@' + token.value
+            case 'SYSTEM_VARIABLE':
+                token_value = '@@' + token.value
+            case _:
+                token_value = token.value
 
-        last_pos = token.index + len(token.value)
+        # add token
+        line += token_value
+
+        last_pos = token.index + len(token_value)
 
     # last line
     content += line
