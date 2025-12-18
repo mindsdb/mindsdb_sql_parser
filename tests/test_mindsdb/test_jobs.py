@@ -110,3 +110,25 @@ class TestJobs:
         )
         assert str(ast) == str(expected_ast)
         assert ast.to_tree() == expected_ast.to_tree()
+
+    def test_create_job_with_variable(self):
+        """Test that @ prefix is preserved in job query_str"""
+        query_str = "INSERT INTO tbl SELECT * FROM source WHERE date > @last_date and @@condition is True"
+        sql = f"""
+            CREATE JOB myjob (
+                {query_str}
+            )
+            EVERY hour
+        """
+        ast = parse_sql(sql)
+        
+        expected_ast = CreateJob(
+            name=Identifier('myjob'),
+            query_str=query_str,
+            repeat_str="hour"
+        )
+        
+        # Check that query_str preserves the @ sign
+        assert ast.query_str == query_str
+        assert str(ast) == str(expected_ast)
+        assert ast.to_tree() == expected_ast.to_tree()
