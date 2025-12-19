@@ -717,26 +717,34 @@ class MindsDBParser(Parser):
         return Use(value=p.identifier)
 
     # CREATE VIEW
-    @_('CREATE VIEW if_not_exists_or_empty identifier create_view_from_table_or_nothing AS LPAREN raw_query RPAREN',
+    @_('CREATE VIEW if_not_exists_or_empty identifier create_view_from_table_or_nothing AS LPAREN raw_query RPAREN USING kw_parameter_list',
+       'CREATE VIEW if_not_exists_or_empty identifier create_view_from_table_or_nothing LPAREN raw_query RPAREN USING kw_parameter_list',
+       'CREATE VIEW if_not_exists_or_empty identifier create_view_from_table_or_nothing AS LPAREN raw_query RPAREN',
        'CREATE VIEW if_not_exists_or_empty identifier create_view_from_table_or_nothing LPAREN raw_query RPAREN')
     def create_view(self, p):
         query_str = tokens_to_string(p.raw_query)
+        using = getattr(p, 'kw_parameter_list', None)
 
         return CreateView(name=p.identifier,
                           from_table=p.create_view_from_table_or_nothing,
                           query_str=query_str,
-                          if_not_exists=p.if_not_exists_or_empty)
+                          if_not_exists=p.if_not_exists_or_empty,
+                          using=using)
 
     # ALTER VIEW
-    @_('ALTER VIEW identifier create_view_from_table_or_nothing AS LPAREN raw_query RPAREN',
+    @_('ALTER VIEW identifier create_view_from_table_or_nothing AS LPAREN raw_query RPAREN USING kw_parameter_list',
+       'ALTER VIEW identifier create_view_from_table_or_nothing LPAREN raw_query RPAREN USING kw_parameter_list',
+       'ALTER VIEW identifier create_view_from_table_or_nothing AS LPAREN raw_query RPAREN',
        'ALTER VIEW identifier create_view_from_table_or_nothing LPAREN raw_query RPAREN')
     def alter_view(self, p):
         query_str = tokens_to_string(p.raw_query)
+        using = getattr(p, 'kw_parameter_list', None)
 
         return AlterView(
             name=p.identifier,
             from_table=p.create_view_from_table_or_nothing,
-            query_str=query_str
+            query_str=query_str,
+            using=using
         )
 
     @_('FROM identifier')

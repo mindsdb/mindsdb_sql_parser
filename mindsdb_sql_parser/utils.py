@@ -151,3 +151,25 @@ def dump_json(obj) -> str:
         return "true" if obj else "false"
 
     return dump_json(str(obj))
+
+
+def dump_using_dict(using: dict | None) -> str | None:
+    from mindsdb_sql_parser.ast.select import Identifier
+    from mindsdb_sql_parser.ast.select.operation import Object
+
+    if using is None:
+        return None
+    using_ar = []
+    for key, value in using.items():
+        if isinstance(value, Object):
+            args = [
+                f'{k}={dump_json(v)}'
+                for k, v in value.params.items()
+            ]
+            args_str = ', '.join(args)
+            value = f'{value.type}({args_str})'
+        else:
+            value = dump_json(value)
+
+        using_ar.append(f'{Identifier(key).to_string()}={value}')
+    return ', '.join(using_ar)

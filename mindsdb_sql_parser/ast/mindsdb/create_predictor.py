@@ -1,7 +1,6 @@
 from mindsdb_sql_parser.ast.base import ASTNode
-from mindsdb_sql_parser.utils import indent, dump_json
+from mindsdb_sql_parser.utils import indent, dump_using_dict
 from mindsdb_sql_parser.ast.select import Identifier
-from mindsdb_sql_parser.ast.select.operation import Object
 
 
 class CreatePredictorBase(ASTNode):
@@ -96,21 +95,7 @@ class CreatePredictorBase(ASTNode):
         horizon_str = f'HORIZON {self.horizon} ' if self.horizon is not None else ''
         using_str = ''
         if self.using:
-            using_ar = []
-            for key, value in self.using.items():
-                if isinstance(value, Object):
-                    args = [
-                        f'{k}={dump_json(v)}'
-                        for k, v in value.params.items()
-                    ]
-                    args_str = ', '.join(args)
-                    value = f'{value.type}({args_str})'
-                else:
-                    value = dump_json(value)
-
-                using_ar.append(f'{Identifier(key).to_string()}={value}')
-
-            using_str = f'USING ' + ', '.join(using_ar)
+            using_str = f'USING {dump_using_dict(self.using)}'
 
         query_str = ''
         if self.query_str is not None:
