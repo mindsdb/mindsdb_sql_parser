@@ -160,21 +160,34 @@ class CreateKnowledgeBaseIndex(ASTNode):
     """
     Create a new index in the knowledge base
     """
-    def __init__(self, name, *args, **kwargs):
+    def __init__(self, name, params=None, *args, **kwargs):
         """
         Args:
             name: Identifier -- name of the knowledge base
         """
         super().__init__(*args, **kwargs)
         self.name = name
+        if params is None:
+            params = {}
+        self.params = params
 
     def to_tree(self, *args, level=0, **kwargs):
         ind = indent(level)
-        out_str = f"{ind}CreateKnowledgeBaseIndex(name={self.name.to_string()})"
+        params_str = ""
+        if self.params:
+            params_str = f",\n{indent(level+1)}params={repr(self.params)}\n{ind}"
+
+        out_str = f"{ind}CreateKnowledgeBaseIndex(name={self.name.to_string()}{params_str})"
         return out_str
 
     def get_string(self, *args, **kwargs):
         out_str = f'CREATE INDEX ON KNOWLEDGE_BASE {self.name.to_string()}'
+        if self.params:
+            params_ar = [
+                f"{k}={repr(v)}"
+                for k, v in self.params.items()
+            ]
+            out_str += f" WITH ({', '.join(params_ar)})"
         return out_str
 
 
