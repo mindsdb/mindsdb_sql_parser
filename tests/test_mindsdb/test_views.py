@@ -82,6 +82,24 @@ class TestViews:
         assert str(ast) == str(expected_ast)
         assert ast.to_tree() == expected_ast.to_tree()
 
+    def test_create_view_with_using_clause(self):
+        """Test CREATE VIEW with USING clause"""
+        sql = 'create view test_view as (select * from local_mysql.test_house where sqft = @myvar) using test = 1, params = {"x": "y"}'
+        ast = parse_sql(sql)
+
+        assert ast.name.to_string() == 'test_view'
+        assert ast.query_str == 'select * from local_mysql.test_house where sqft = @myvar'
+        assert ast.using == {'test': 1, 'params': {'x': 'y'}}
+
+    def test_alter_view_with_using_clause(self):
+        """Test ALTER VIEW with USING clause"""
+        sql = 'ALTER VIEW myview AS (select * from tbl) USING param1 = "value1", param2 = 123'
+        ast = parse_sql(sql)
+        
+        assert ast.name.to_string() == 'myview'
+        assert ast.query_str == 'select * from tbl'
+        assert ast.using == {'param1': 'value1', 'param2': 123}
+
     # def test_create_dataset_full(self):
     #     sql = "CREATE DATASET my_view FROM integr AS ( SELECT * FROM pred )"
     #     ast = parse_sql(sql)
