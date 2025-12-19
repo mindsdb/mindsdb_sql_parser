@@ -67,7 +67,7 @@ class TestViews:
         assert '@var2' in ast.query_str
         assert ast.query_str == query_str
 
-    def test_alter_view_with_variableы(self):
+    def test_alter_view_with_variables(self):
         """Test that @ prefix is preserved in ALTER VIEW query_str"""
         query_str = "SELECT @var1, @@sys_var FROM tbl WHERE x = @var2"
         sql = f"ALTER VIEW myview AS ({query_str})"
