@@ -1,6 +1,3 @@
-import json
-import datetime as dt
-
 from mindsdb_sql_parser.ast.base import ASTNode
 from mindsdb_sql_parser.utils import indent
 
