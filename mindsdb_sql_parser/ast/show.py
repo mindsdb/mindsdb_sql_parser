@@ -31,12 +31,12 @@ class Show(ASTNode):
         ind = indent(level)
         ind1 = indent(level+1)
         category_str = f'{ind1}category={repr(self.category)},'
-        from_str = f'\n{ind1}from={self.from_table.to_string()},' if self.from_table else ''
-        in_str = f'\n{ind1}in={self.in_table.to_tree(level=level + 2)},' if self.in_table else ''
+        from_str = f'\n{ind1}from_table={self.from_table.to_tree(level=level + 2)},' if self.from_table else ''
+        in_str = f'\n{ind1}in_table={self.in_table.to_tree(level=level + 2)},' if self.in_table else ''
         where_str = f'\n{ind1}where=\n{self.where.to_tree(level=level+2)},' if self.where else ''
-        name_str = f'\n{ind1}name={self.name},' if self.name else ''
-        like_str = f'\n{ind1}like={self.like},' if self.like else ''
-        modes_str = f'\n{ind1}modes=[{",".join(self.modes)}],' if self.modes else ''
+        name_str = f'\n{ind1}name={repr(self.name)},' if self.name else ''
+        like_str = f'\n{ind1}like={repr(self.like)},' if self.like else ''
+        modes_str = f'\n{ind1}modes=[{",".join([repr(m) for m in self.modes])}],' if self.modes else ''
         out_str = f'{ind}Show(' \
                   f'{category_str}' \
                   f'{name_str}' \
