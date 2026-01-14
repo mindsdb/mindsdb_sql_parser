@@ -71,7 +71,7 @@ class TestSpecificSelects:
            using p1=1, p2='2', p3=column
         """
         ast = parse_sql(sql)
-        expected_ast = Select(
+        expected_select = Select(
             targets=[Identifier('status')],
             from_table=Identifier('tbl1'),
             group_by=[Constant(1)],
@@ -80,6 +80,23 @@ class TestSpecificSelects:
                 'p2': '2',
                 'p3': Identifier('column')
             }
+        )
+
+        assert str(ast) == str(expected_select)
+        assert ast.to_tree() == expected_select.to_tree()
+
+        sql = """
+           insert into int2.table2
+            (
+             SELECT status FROM tbl1
+             group by 1
+            )
+           using p1=1, p2='2', p3=column
+        """
+        ast = parse_sql(sql)
+        expected_ast = Insert(
+            table=Identifier('int2.table2'),
+            from_select=expected_select
         )
 
         assert str(ast) == str(expected_ast)
