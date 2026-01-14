@@ -1108,14 +1108,14 @@ class MindsDBParser(Parser):
         distinct_key = hasattr(p, 'DISTINCT')
         return Except(left=p[0], right=p[-1], unique=unique, distinct_key=distinct_key)
 
-    # tableau
-    @_('LPAREN union RPAREN')
-    def union(self, p):
-        return p[1]
-
     @_('select')
     def union(self, p):
         return p[0]
+
+    # tableau
+    @_('LPAREN select RPAREN')
+    def select(self, p):
+        return p[1]
 
     # WITH
     @_('ctes select')
