@@ -1109,8 +1109,8 @@ class MindsDBParser(Parser):
         return Except(left=p[0], right=p[-1], unique=unique, distinct_key=distinct_key)
 
     # tableau
-    @_('LPAREN select RPAREN')
-    def select(self, p):
+    @_('LPAREN union RPAREN')
+    def union(self, p):
         return p[1]
 
     @_('select')
