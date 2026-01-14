@@ -877,6 +877,33 @@ class TestSelectStructure:
         assert str(ast) == str(expected_ast)
         assert ast.to_tree() == expected_ast.to_tree()
 
+    def test_in_union(self):
+        sql = f'''
+          SELECT * FROM tbl1 
+          where col in (
+            select id from tbl2
+            union 
+            select id from tbl3
+          )
+        '''
+        ast = parse_sql(sql)
+
+        expected_ast = Select(
+            targets=[Star()],
+            from_table=Identifier('tbl1'),
+            where=BinaryOperation(op='in', args=(
+                Identifier('col'),
+                Union(
+                    left=Select(targets=[Identifier('id')], from_table=Identifier('tbl2')),
+                    right=Select(targets=[Identifier('id')], from_table=Identifier('tbl3')),
+                    parentheses=True
+                )
+            ))
+        )
+
+        assert str(ast) == str(expected_ast)
+        assert ast.to_tree() == expected_ast.to_tree()
+
 
 class TestSelectStructureNoSqlite:
     def test_select_from_plugins(self):
