@@ -904,6 +904,37 @@ class TestSelectStructure:
         assert str(ast) == str(expected_ast)
         assert ast.to_tree() == expected_ast.to_tree()
 
+    def test_union_alias(self):
+        sql = f'''
+        SELECT * FROM (
+           (
+            SELECT col1 FROM tab1
+            UNION
+            SELECT col1 FROM tab2
+           )
+           UNION
+            SELECT col1 FROM tab3
+        ) AS tt
+        '''
+        ast = parse_sql(sql)
+
+        expected_ast = Select(
+            targets=[Star()],
+            from_table=Union(
+                left=Union(
+                    left=Select(targets=[Identifier('col1')], from_table=Identifier('tab1')),
+                    right=Select(targets=[Identifier('col1')], from_table=Identifier('tab2')),
+                    parentheses=True
+                ),
+                right=Select(targets=[Identifier('col1')], from_table=Identifier('tab3')),
+                parentheses=True,
+                alias=Identifier('tt')
+            )
+        )
+
+        assert str(ast) == str(expected_ast)
+        assert ast.to_tree() == expected_ast.to_tree()
+
 
 class TestSelectStructureNoSqlite:
     def test_select_from_plugins(self):
