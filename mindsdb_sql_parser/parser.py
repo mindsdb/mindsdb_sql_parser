@@ -667,13 +667,11 @@ class MindsDBParser(Parser):
                       from_select=p.select)
 
     # INSERT
-    @_('INSERT INTO identifier LPAREN column_list RPAREN select',
-       'INSERT INTO identifier LPAREN column_list RPAREN union',
-       'INSERT INTO identifier select',
+    @_('INSERT INTO identifier LPAREN column_list RPAREN union',
        'INSERT INTO identifier union')
     def insert(self, p):
         columns = getattr(p, 'column_list', None)
-        query = p.select if hasattr(p, 'select') else p.union
+        query = p.union
         return Insert(table=p.identifier, columns=columns, from_select=query)
 
     @_('INSERT INTO identifier LPAREN column_list RPAREN VALUES expr_list_set',
@@ -1086,33 +1084,24 @@ class MindsDBParser(Parser):
         return {'identifier':p.identifier, 'engine':engine, 'if_not_exists':p.if_not_exists_or_empty}
 
     # Combining
-    @_('select UNION select',
-       'union UNION select',
-       'select UNION ALL select',
+    @_('union UNION select',
        'union UNION ALL select',
-       'select UNION DISTINCT select',
        'union UNION DISTINCT select')
     def union(self, p):
         unique = not hasattr(p, 'ALL')
         distinct_key = hasattr(p, 'DISTINCT')
         return Union(left=p[0], right=p[-1], unique=unique, distinct_key=distinct_key)
 
-    @_('select INTERSECT select',
-       'union INTERSECT select',
-       'select INTERSECT ALL select',
+    @_('union INTERSECT select',
        'union INTERSECT ALL select',
-       'select INTERSECT DISTINCT select',
        'union INTERSECT DISTINCT select')
     def union(self, p):
         unique = not hasattr(p, 'ALL')
         distinct_key = hasattr(p, 'DISTINCT')
         return Intersect(left=p[0], right=p[-1], unique=unique, distinct_key=distinct_key)
 
-    @_('select EXCEPT select',
-       'union EXCEPT select',
-       'select EXCEPT ALL select',
+    @_('union EXCEPT select',
        'union EXCEPT ALL select',
-       'select EXCEPT DISTINCT select',
        'union EXCEPT DISTINCT select')
     def union(self, p):
         unique = not hasattr(p, 'ALL')
@@ -1121,9 +1110,12 @@ class MindsDBParser(Parser):
 
     # tableau
     @_('LPAREN select RPAREN')
-    @_('LPAREN union RPAREN')
     def select(self, p):
         return p[1]
+
+    @_('select')
+    def union(self, p):
+        return p[0]
 
     # WITH
     @_('ctes select')
@@ -1132,8 +1124,7 @@ class MindsDBParser(Parser):
         select.cte = p.ctes
         return select
 
-    @_('ctes COMMA identifier cte_columns_or_nothing AS LPAREN select RPAREN',
-       'ctes COMMA identifier cte_columns_or_nothing AS LPAREN union RPAREN')
+    @_('ctes COMMA identifier cte_columns_or_nothing AS LPAREN union RPAREN')
     def ctes(self, p):
         ctes = p.ctes
         ctes = ctes + [
@@ -1144,8 +1135,7 @@ class MindsDBParser(Parser):
         ]
         return ctes
 
-    @_('WITH identifier cte_columns_or_nothing AS LPAREN select RPAREN',
-       'WITH identifier cte_columns_or_nothing AS LPAREN union RPAREN')
+    @_('WITH identifier cte_columns_or_nothing AS LPAREN union RPAREN')
     def ctes(self, p):
         return [
             CommonTableExpression(
@@ -1518,11 +1508,11 @@ class MindsDBParser(Parser):
 
     # OPERATIONS
 
-    @_('LPAREN select RPAREN')
+    @_('LPAREN union RPAREN')
     def expr(self, p):
-        select = p.select
-        select.parentheses = True
-        return select
+        union = p.union
+        union.parentheses = True
+        return union
 
     @_('LPAREN expr RPAREN')
     def expr(self, p):
