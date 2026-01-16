@@ -21,27 +21,18 @@ def path_str_to_parts(path_str: str):
     return parts, is_quoted
 
 
-RESERVED_KEYWORDS = {
-    'PERSIST', 'IF', 'EXISTS', 'NULLS', 'FIRST', 'LAST',
-    'ORDER', 'BY', 'GROUP', 'PARTITION'
+# Here is a hardcoded set of keywords that can be used as identifiers without escaping.
+# For example, in a query like this: select {keyword} from tbl
+# If there is a need to update this list, an example code to retrieve all keywords can be found here in v0.13.6
+keywords_to_escape = {
+    "VALUES", "DESCRIBE", "THEN", "WRITE", "WITH", "INSERT", "DROP", "CROSS",
+    "SET", "ASC", "IS", "IN", "NOT", "INTO", "WINDOW", "ALTER", "WHERE",
+    "DISTINCT", "USE", "INNER", "COLLATE", "FOR", "USING", "FULL", "LIKE",
+    "JOIN", "SELECT", "OVER", "CASE", "LIMIT", "END", "UNION", "DELETE",
+    "HAVING", "OUTER", "FROM", "AS", "CHARACTER", "INTERSECT", "CONVERT",
+    "WHEN", "OR", "AND", "UPDATE", "BETWEEN", "DESC", "EXPLAIN", "SHOW",
+    "EXCEPT", "LEFT", "ELSE", "READ", "RIGHT"
 }
-
-
-_reserved_keywords: set[str] = None
-
-
-def get_reserved_words() -> set[str]:
-    global _reserved_keywords
-
-    if _reserved_keywords is None:
-        from mindsdb_sql_parser.lexer import MindsDBLexer
-
-        _reserved_keywords = RESERVED_KEYWORDS
-        for word in MindsDBLexer.tokens:
-            if '_' not in word:
-                # exclude combinations
-                _reserved_keywords.add(word)
-    return _reserved_keywords
 
 
 class Identifier(ASTNode):
@@ -77,7 +68,6 @@ class Identifier(ASTNode):
         self.is_quoted += other.is_quoted
 
     def iter_parts_str(self):
-        reserved_words = get_reserved_words()
         for part, is_quoted in zip(self.parts, self.is_quoted):
             if isinstance(part, Star):
                 part = str(part)
@@ -85,7 +75,7 @@ class Identifier(ASTNode):
                 if (
                     is_quoted
                     or not no_wrap_identifier_regex.fullmatch(part)
-                    or part.upper() in reserved_words
+                    or part.upper() in keywords_to_escape
                 ):
                     part = f'`{part}`'
             yield part
