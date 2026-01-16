@@ -738,7 +738,29 @@ class TestSelectStructure:
         sql = "SELECT `integration`.`some table`.column"
         ast = parse_sql(sql)
 
-        expected_ast = Select(targets=[Identifier(parts=['integration', 'some table', 'column']),],)
+        expected_ast = Select(
+            targets=[
+                Identifier(
+                    parts=['integration', 'some table', 'column'],
+                    is_quoted=[True, True, False]
+                ),
+            ],
+        )
+
+        assert ast.to_tree() == expected_ast.to_tree()
+        assert str(ast) == str(expected_ast)
+
+    def test_keyword_escaping(self):
+        sql = "select ID, `ID`, `VALUES`"
+        ast = parse_sql(sql)
+
+        expected_ast = Select(
+            targets=[
+                Identifier(parts=['ID'], is_quoted=[False]),
+                Identifier(parts=['ID'], is_quoted=[True]),
+                Identifier(parts=['VALUES'], is_quoted=[True]),
+            ],
+        )
 
         assert ast.to_tree() == expected_ast.to_tree()
         assert str(ast) == str(expected_ast)
