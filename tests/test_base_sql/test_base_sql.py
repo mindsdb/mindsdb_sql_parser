@@ -1,5 +1,9 @@
 from textwrap import dedent
+
+import pytest
+
 from mindsdb_sql_parser import parse_sql
+from mindsdb_sql_parser.exceptions import ParsingException
 
 from mindsdb_sql_parser.ast import *
 
@@ -86,3 +90,24 @@ b"
 
         assert str(ast).lower() == str(expected_ast).lower()
         assert ast.to_tree() == expected_ast.to_tree()
+
+    def test_multy_statement(self):
+        sql = """
+        select 1; 
+        select 2
+        """
+
+        with pytest.raises(ParsingException) as excinfo:
+            parse_sql(sql)
+
+        assert "Only a single sql statement is expected" in str(excinfo.value)
+
+    def test_comment_after_semicolon(self):
+        sql = """
+        select 1; -- my query
+        """
+
+        query = parse_sql(sql)
+        assert query == Select(targets=[Constant(1)])
+
+

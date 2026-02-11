@@ -25,6 +25,11 @@ class ErrorHandling:
         # show error location
         msgs = self.error_location()
 
+        if self.bad_token is not None and self.bad_token.value == ';':
+            # unexpected semicolon in the middle of the query, it might be delimiter of statements
+            msgs.append('Only a single sql statement is expected. Got multiple instead')
+            return '\n'.join(msgs)
+
         # suggestion
         suggestions = self.make_suggestion()
 
@@ -170,6 +175,10 @@ def parse_sql(sql, dialect=None):
     from mindsdb_sql_parser.lexer import MindsDBLexer
     from mindsdb_sql_parser.parser import MindsDBParser
     lexer, parser = MindsDBLexer(), MindsDBParser()
+
+    # remove comments
+    sql = re.sub(r'--.*?$', '', sql, flags=re.MULTILINE)
+    sql = re.sub(r'/\*.*?\*/', '', sql, flags=re.DOTALL)
 
     # remove ending semicolon and spaces
     sql = re.sub(r'[\s;]+$', '', sql)
