@@ -110,4 +110,22 @@ b"
         query = parse_sql(sql)
         assert query == Select(targets=[Constant(1)])
 
+    def test_comment_symbols_in_string(self):
+        expected_query = Select(targets=[Constant('--x')])
+
+        query = parse_sql("select '--x'")
+        assert query == expected_query
+
+        query = parse_sql('select "--x"')
+        assert query == expected_query
+
+        # multiline
+        expected_query = Select(targets=[Constant('/*  x */')])
+
+        query = parse_sql("select '/*  x */'")
+        assert query == expected_query
+
+        query = parse_sql('select "/*  x */"')
+        assert query == expected_query
+
 
