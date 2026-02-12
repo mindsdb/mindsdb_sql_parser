@@ -25,6 +25,11 @@ class ErrorHandling:
         # show error location
         msgs = self.error_location()
 
+        if self.bad_token is not None and self.bad_token.value == ';':
+            # unexpected semicolon in the middle of the query, it might be delimiter of statements
+            msgs.append('Only a single sql statement is expected. Got multiple instead')
+            return '\n'.join(msgs)
+
         # suggestion
         suggestions = self.make_suggestion()
 
@@ -171,11 +176,25 @@ def parse_sql(sql, dialect=None):
     from mindsdb_sql_parser.parser import MindsDBParser
     lexer, parser = MindsDBLexer(), MindsDBParser()
 
-    # remove ending semicolon and spaces
-    sql = re.sub(r'[\s;]+$', '', sql)
+    def semicolon_checker(generator):
+        """
+        Repeat the same elements from generator except trailing SEMICOLON tokens.
+        They are kept in buffer till any other token appear
+        """
+
+        buffer = []
+        for token in generator:
+            if token.type == 'SEMICOLON':
+                buffer.append(token)
+                continue
+            elif len(buffer) > 0:
+                for buf_token in buffer:
+                    yield buf_token
+                buffer = []
+            yield token
 
     tokens = lexer.tokenize(sql)
-    ast = parser.parse(tokens)
+    ast = parser.parse(semicolon_checker(tokens))
 
     if ast is None:
 

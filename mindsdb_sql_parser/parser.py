@@ -43,6 +43,7 @@ Unfortunately the rules are not iherited from base SQLParser, because it just do
 class MindsDBParser(Parser):
     log = ParserLogger()
     tokens = MindsDBLexer.tokens
+    start = "query"
 
     precedence = (
         ('left', OR),
