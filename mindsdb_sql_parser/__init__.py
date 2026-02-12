@@ -176,15 +176,25 @@ def parse_sql(sql, dialect=None):
     from mindsdb_sql_parser.parser import MindsDBParser
     lexer, parser = MindsDBLexer(), MindsDBParser()
 
-    # remove comments
-    sql = re.sub(r'--.*?$', '', sql, flags=re.MULTILINE)
-    sql = re.sub(r'/\*.*?\*/', '', sql, flags=re.DOTALL)
+    def semicolon_checker(generator):
+        """
+        Repeat the same elements from generator except trailing SEMICOLON tokens.
+        They are kept in buffer till any other token appear
+        """
 
-    # remove ending semicolon and spaces
-    sql = re.sub(r'[\s;]+$', '', sql)
+        buffer = []
+        for token in generator:
+            if token.type == 'SEMICOLON':
+                buffer.append(token)
+                continue
+            elif len(buffer) > 0:
+                for buf_token in buffer:
+                    yield buf_token
+                buffer = []
+            yield token
 
     tokens = lexer.tokenize(sql)
-    ast = parser.parse(tokens)
+    ast = parser.parse(semicolon_checker(tokens))
 
     if ast is None:
 

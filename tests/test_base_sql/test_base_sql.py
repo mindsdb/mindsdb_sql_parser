@@ -102,6 +102,10 @@ b"
 
         assert "Only a single sql statement is expected" in str(excinfo.value)
 
+    def test_trailing_semicolon(self):
+        query = parse_sql("select 1;")
+        assert query == Select(targets=[Constant(1)])
+
     def test_comment_after_semicolon(self):
         sql = """
         select 1; -- my query
@@ -127,5 +131,4 @@ b"
 
         query = parse_sql('select "/*  x */"')
         assert query == expected_query
-
 
